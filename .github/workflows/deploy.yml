@@ -1,4 +1,4 @@
-name: Deploy GenUI Field Guide
+name: Deploy GenUI Field Notes
 
 on:
   push:
@@ -12,6 +12,6 @@ jobs:
       contents: read
       pages: write
       id-token: write
-    uses: 2BAB/minibook-kit/.github/workflows/deploy-github-pages.yml@v0.1.2
+    uses: 2BAB/minibook-kit/.github/workflows/deploy-github-pages.yml@v0.1.3
     with:
       book: genui

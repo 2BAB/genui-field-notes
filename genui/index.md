@@ -1,4 +1,4 @@
-# GenUI Field Guide
+# GenUI Field Notes
 
 GenUI is not one product shape or one implementation trick. It is a family of techniques for letting software generate, adapt, or assemble interface experiences from intent, state, tools, data, and feedback.
 

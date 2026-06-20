@@ -1,8 +1,8 @@
-# GenUI Field Guide
+# GenUI Field Notes
 
 A compact minibook for comparing GenUI technical routes, evaluation methods, chat-like interface requirements, and more general adaptive UI scenarios.
 
-Read it at <https://genui.2bab.com/>.
+Read it in [English](https://genui.2bab.com/) or [简体中文](https://genui.2bab.com/zh-cn/).
 
 ## Local Development
 
