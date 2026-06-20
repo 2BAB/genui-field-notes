@@ -1,0 +1,17 @@
+# Node
+node_modules
+.pnpm-store
+.DS_Store
+
+# Book build output
+_book
+.dist
+.vitepress/cache
+.vitepress/dist
+
+# eBook build output
+*.epub
+*.mobi
+*.pdf
+
+*.key
