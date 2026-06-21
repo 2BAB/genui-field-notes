@@ -79,7 +79,7 @@ const chineseSidebar = [
 ]
 
 export default defineMinibook({
-  id: 'genui',
+  id: 'genui-field-notes',
   srcDir: 'genui-field-notes',
   title: 'GenUI Field Notes',
   description: 'Field notes on GenUI cases, UI expression, runtime behavior, and agent development.',
