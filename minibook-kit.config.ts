@@ -28,7 +28,7 @@ export default defineMinibookKit({
       }
     ]
   },
-  repository: 'https://github.com/2BAB/genui/',
+  repository: 'https://github.com/2BAB/genui-field-notes/',
   theme: {
     accentColor: '#0f766e',
     darkAccentColor: '#2dd4bf'

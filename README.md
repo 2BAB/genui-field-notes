@@ -1,6 +1,6 @@
 # GenUI Field Notes
 
-A compact minibook for comparing GenUI technical routes, evaluation methods, chat-like interface requirements, and more general adaptive UI scenarios.
+A compact minibook for observing GenUI cases, UI expression, runtime behavior, and agent development.
 
 Read it in [English](https://genui.2bab.com/) or [简体中文](https://genui.2bab.com/zh-cn/).
 
@@ -18,7 +18,7 @@ pnpm preview
 ## Configuration
 
 - `minibook-kit.config.ts`: owner, social links, theme colors, and deployment defaults.
-- `genui/book.config.ts`: title, description, locale, and sidebar.
+- `genui-field-notes/book.config.ts`: title, description, locale, and sidebar.
 - `.vitepress/config.ts` and `.vitepress/theme/index.ts`: thin wrappers that import the shared kit.
 
 ## Deployment

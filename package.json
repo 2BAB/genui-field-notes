@@ -1,13 +1,13 @@
 {
-  "name": "genui",
+  "name": "genui-field-notes",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.19.0",
   "scripts": {
-    "dev": "minibook dev genui",
-    "build": "minibook build genui",
-    "preview": "minibook preview genui",
+    "dev": "minibook dev genui-field-notes",
+    "build": "minibook build genui-field-notes",
+    "preview": "minibook preview genui-field-notes",
     "books:list": "minibook list"
   },
   "devDependencies": {
