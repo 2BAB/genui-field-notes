@@ -19,7 +19,7 @@
 
 ![GitHub tag](https://img.shields.io/github/tag/2BAB/genui-field-notes.svg)
 
-手册内容为人工编写，LLM 仅执行纠错润色；我也鼓励大家把 AI 更多使用在前期的发现探索和 Demo 实验中。想参与手册编辑，请访问 GenUI Field Notes 的 [Github Repo](https://github.com/2BAB/genui-field-notes)。其他相关问题，欢迎[联系我](https://2bab.me/about)。
+手册内容为人工编写，LLM 仅辅助纠错与润色。鼓励大家把 AI 更多使用在前期的发现探索、 Demo 实验、技术讨论等，而非小册写作本身。想参与手册编辑，请访问 GenUI Field Notes 的 [Github Repo](https://github.com/2BAB/genui-field-notes)。其他相关问题，欢迎[联系我](https://2bab.me/about)。
 
 ## 贡献者名单
 
