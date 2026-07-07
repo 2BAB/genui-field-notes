@@ -22,11 +22,11 @@ const englishSidebar = [
     link: '/05-vercel-generative-ui'
   },
   {
-    text: '6. The UI Expression Layer',
+    text: '6. Comparing Outputs at UI Generation Time',
     link: '/06-ui-expression-layer'
   },
   {
-    text: '7. The UI Runtime',
+    text: '7. Data and Behavior Flow After UI Generation',
     link: '/07-ui-runtime'
   },
   {
@@ -53,7 +53,7 @@ const chineseSidebar = [
     link: '/zh-cn/03-openui-thesys-c1'
   },
   {
-    text: '4. Google A2UI 及其上下游',
+    text: '4. Google A2UI 及其生态',
     link: '/zh-cn/04-google-a2ui'
   },
   {
@@ -61,11 +61,11 @@ const chineseSidebar = [
     link: '/zh-cn/05-vercel-generative-ui'
   },
   {
-    text: '6. UI 表达层',
+    text: '6. UI 生成时，不同框架的输出细节比对',
     link: '/zh-cn/06-ui-expression-layer'
   },
   {
-    text: '7. UI 运行时',
+    text: '7. UI 生成后，不同框架的数据和行为如何继续流转',
     link: '/zh-cn/07-ui-runtime'
   },
   {

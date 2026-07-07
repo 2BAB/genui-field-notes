@@ -1,4 +1,4 @@
-# Why Chat-like GenUI Gets So Much Attention
+# Chat-like GenUI and Other Forms
 
 This chapter builds on several observations from my earlier blog post, [A2UI, AG-UI, and GenUI Beyond the Chat Box](https://2bab.me/en/blog/2026-05-15-a2ui-agui-surface-spec/), and also brings in the [Generative UI case study](https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/) from Google Research.
 
@@ -56,7 +56,7 @@ This is why chat-like GenUI is a useful entry point. It compresses the generativ
 
 ## Platform and Technical Options
 
-Finally, a note on platform technology choices. Many AI Native products today are visibly more Web Frontend oriented, and one important reason is that the Web has fewer restrictions around "dynamic" behavior. GenUI becomes more constrained once multiple platforms enter the picture, mainly because Android and iOS native apps cannot download and execute native code at runtime. On mobile, such requirements usually have to go through controlled components, BDUI, or RN-like solutions that are closer to a Web runtime. This is also why many things are first tested on the Web: it echoes the idea at the beginning of this chapter, starting from a more controlled surface and finding a practical technical path. Chat-like GenUI is one such surface. Of course, many e-commerce apps have long used RN or other dynamic frameworks for campaign slots and feed cells on their home pages; that experience is still relevant to GenUI.
+Finally, a note on platform technology choices. Many AI Native products today are visibly more Web Frontend oriented, and one important reason is that the Web has fewer restrictions around "dynamic" behavior and compliance. GenUI becomes more constrained once multiple platforms enter the picture, mainly because Android and iOS native apps cannot freely download and execute native code at runtime. On mobile, such requirements usually have to go through controlled components / BDUI, or RN-like solutions that are closer to a Web runtime. This is also why many things are first tested on the Web: it echoes the idea at the beginning of this chapter, starting from a more local surface and finding a practical technical path. Chat-like GenUI is one such surface. Of course, many e-commerce apps have long used RN or other dynamic frameworks for campaign slots and feed cells on their home pages; that experience may still have its own playbook in GenUI.
 
 ## References
 
