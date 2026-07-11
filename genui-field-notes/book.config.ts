@@ -18,11 +18,11 @@ const englishSidebar = [
     link: '/04-google-a2ui'
   },
   {
-    text: '5. GenUI in Vercel AI SDK',
+    text: '5. The GenUI Feature in Vercel AI SDK',
     link: '/05-vercel-generative-ui'
   },
   {
-    text: '6. Comparing Outputs at UI Generation Time',
+    text: '6. Comparing Framework Outputs at UI Generation Time',
     link: '/06-ui-expression-layer'
   },
   {

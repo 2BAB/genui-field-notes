@@ -1,12 +1,12 @@
 # Chat-like GenUI 与其他形态
 
-本文延续我之前的中文博客 [《A2UI、AG-UI，以及聊天框之外的 GenUI》](https://2bab.me/zh/blog/2026-05-15-a2ui-agui-surface-spec/) 里的几个观察，后半段再加入 Google Research 的 [Generative UI 案例](https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/)。
+本章延续我之前的中文博客 [《A2UI、AG-UI，以及聊天框之外的 GenUI》](https://2bab.me/zh/blog/2026-05-15-a2ui-agui-surface-spec/) 里的几个观察，后半段再加入 Google Research 的 [Generative UI 案例](https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/)。
 
 GenUI 领域里，目前很多讨论焦点会先落到 chat-like GenUI。这里的 chat-like 可以先理解成一种产品边界：用户在一次对话里提出需求，系统返回一段有限的 UI，用户再通过按钮、表单、follow-up action 或继续提问往下走。博文里我记录过这个现象：
 
 > 现在 A2UI 和 AG-UI 的重心仍然很明显地落在 **chat-like style** 上
 
-现在回头看，这里面的商业诉求是很明显的，即与当下世界的注意力所在重合。但这节我们更关心的是另一个角度，也是技术田野调查应该看的：Chat-like GenUI 可以把生成式 UI 的复杂度压在一次对话、一张卡片、一个 panel 或一段 response 里，是一个很好的起点。
+现在回头看，这里面的商业诉求是很明显的，即与当下世界的注意力所在重合。但本章更关心的是另一个角度，也是技术田野调查应该看的：Chat-like GenUI 可以把生成式 UI 的复杂度压在一次对话、一张卡片、一个 panel 或一段 response 里，是一个很好的起点。
 
 ## 一次对话里的复杂度
 

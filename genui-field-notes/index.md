@@ -9,7 +9,7 @@ This minibook follows several early practices that are currently observable: Ope
 ## Copyright Notice
 
 1. *Original content* follows the **[Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)** license.
-2. Full *link references* at the end of articles are embedded in the format `Title @ Author`. A small number of *content references* are linked in context with plain Markdown links to the original source.
+2. Full *link references* at the end of chapters are embedded in the format `Title @ Author`. A small number of *content references* are linked in context with plain Markdown links to the original source.
 3. Any quoted or referenced content will be kept as close to the original meaning as possible.
 4. Referenced materials mainly come from official documentation, GitHub repos, demos, technical articles, and product experiments related to OpenUI, A2UI, Thesys C1, Vercel AI SDK, and adjacent GenUI work.
 

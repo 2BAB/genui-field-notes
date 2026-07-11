@@ -1,46 +1,169 @@
 # UI 生成时，不同框架的输出细节比对
 
-前面几篇分别看了 OpenUI / Thesys C1 和 Google A2UI。读到这里，可以先把问题收窄到一个更具体的层面：当用户发出一次请求，模型或 agent 在“生成 UI”这一步，到底吐出了什么东西？
+前面几章的重点是各家框架/协议在做什么，以及一套 GenUI 产品大致是怎样工作，给了一些 Demo。从本章开始，我们往实现细节里再走一层。先看 UI 生成阶段：同样输入一份 Singapore weather snapshot，OpenUI 和 A2UI 在 renderer 前面分别生成了什么？Vercel 由于内容不多，就不参与本章的分析。
 
-这个问题很容易被产品截图掩盖。最后看起来都可能是一张卡片、一个表单、一组按钮，但生成时的中间产物差异很大。它决定了后续能不能流式渲染、能不能局部更新、能不能跨端、能不能把用户动作继续送回 agent。
+OpenUI 天气 demo 使用 10 个天气领域组件，由 Gemini 3.5 Flash 生成 OpenUI Lang，再交给 React renderer：
 
-## A2UI 更像 agent-driven BDUI
+![OpenUI Singapore weather demo](../public/media/openui-weather-singapore.png)
 
-如果用移动端开发者熟悉的说法，A2UI 很像一种 **agent-driven BDUI**。
+A2UI 天气 demo 使用 v0.9 Basic Catalog，同样由 Gemini 3.5 Flash 生成 A2UI messages。服务端完成校验后，再交给 Flutter renderer：
 
-传统 BDUI 里，客户端提前实现一套组件和 renderer，服务端按业务规则下发页面结构、组件参数、数据和 action。A2UI 继承了这个基本形态：客户端仍然有受控组件 catalog，renderer 仍然在本地，用户动作也通过协议回传。变化在于，组装 payload 的角色从固定业务后端、配置平台或运营系统，变成了 agent / LLM。
+![A2UI Flutter Singapore weather demo](../public/media/a2ui-weather-singapore.png)
 
-所以 A2UI 生成时输出的重点会落在一组协议消息上，临时拼出来的 UI 代码不在这条路径里。例如：
+两边使用同一份固定数据：Singapore、26°C、体感 29°C、湿度 82%、风速 13 km/h，也都保留了真实 Gemini request、raw SSE 和最终输出。这样可以直接看两套生成合约的差异，同时观察同一个模型面对两种表达方式时的实际结果；但我们刻意让 OpenUI 在这一轮使用更 semantic 的大组件，A2UI 使用更原子一些的，以此来对比这方面的行为细节。注意，本章对比手法并不完全严谨（控制变量）。
+
+## 生成端先拿到什么
+
+模型要生成 UI，第一步是先知道自己可以使用哪些组件，以及应该按什么格式输出。
+
+OpenUI 会把 component library 展开成 system prompt。天气实验注册了 `WeatherCanvas`、`WeatherHero`、`MetricGrid`、`HourlyForecast`、`DailyForecast`、`UnitToggle`、`ActionButton` 等 10 个组件，最后生成的 system prompt 约 8,900 个字符，使用 GPT-5 tokenizer 计算为 2,205 tokens。它主要包含四部分：
+
+1. OpenUI Lang 的语法，例如每行使用 `identifier = Expression`，`root` 是入口。
+2. 组件的 signature、参数顺序和字段类型。
+3. `$unit`、`@Set`、`@ToAssistant`、`Query()` 等状态、行为和数据规则。
+4. 一份完整的天气 UI few-shot example。
+
+本轮 user message 只有一句 `Show Singapore weather` 和固定 weather snapshot。模型根据 system prompt 选择组件，React 组件的内部布局和样式仍由应用代码决定。
+
+A2UI 先由客户端声明自己支持的 catalog：
 
 ```json
-{"version":"v0.9","createSurface":{"surfaceId":"weather","catalogId":"https://a2ui.org/specification/v0_9/basic_catalog.json"}}
+{
+  "a2uiClientCapabilities": {
+    "v0.9": {
+      "supportedCatalogIds": [
+        "https://a2ui.org/specification/v0_9/basic_catalog.json"
+      ]
+    }
+  }
+}
+```
+
+`catalogId` 是客户端和 agent 共同使用的组件词典。客户端借它说明“我能渲染哪些组件”；agent 或 generation middleware 再把 protocol schema、catalog 和生成规则整理给模型。A2UI 规定通信合约，system prompt 由每个 agent 实现自行组织。
+
+本次 A2UI system prompt 是一份针对天气 demo 裁剪过的生成合约，共 9,466 个字符、2,323 tokens，主要包含四部分：
+
+1. `createSurface`、`updateDataModel`、`updateComponents` 三条消息的顺序和固定字段。
+2. `Card`、`Column`、`Row`、`Text`、`Icon`、`Divider`、`Button` 七种 Basic Catalog 元组件的属性约束。
+3. 组件 ID、引用、数据、四个城市 action，以及窄屏每行两个按钮的规则。
+4. 一份完整的 Tokyo 66-component few-shot example。
+
+而一轮 user message 为一句当前请求加完整 weather snapshot，像 demo 里的这轮共 542 个字符、150 tokens。模型生成 JSONL 后，服务端继续检查 catalog、消息顺序、数据、组件树和 action，再把通过校验的三条消息交给 A2A。
+
+这两个起点已经带出一项工程差异：OpenUI 的生成合约通常跟着 Web 服务和 component library 一起发布；A2UI 的 catalog 同时受客户端版本约束，服务端需要先知道当前 Android、iOS 或 Flutter 客户端能画什么。
+
+## 第一次生成：OpenUI Lang 和 A2UI Messages
+
+OpenUI 返回的是一段以 `root` 为入口的 UI 程序。本次真实 Gemini 输出一共 17 条 statements，开头如下：
+
+```text
+root = WeatherCanvas([hero, metrics, hourly, daily, advisory, controls])
+$unit = "c"
+hero = WeatherHero("Singapore", "Singapore", "2026-06-22 20:00 SGT", 26, 29, "Mostly cloudy", "Mostly cloudy and humid...", $unit)
+metrics = MetricGrid([humidity, wind, rain, heat])
+```
+
+第一行先列出整棵 UI 的主要部分，后面的 statement 再依次补上 `hero`、`metrics`、`controls`。组件使用位置参数，字段名已经写在 component signature 里，模型无需在每次调用时重复输出。
+
+A2UI 返回的是几条有顺序的消息。为了便于阅读，下面只保留每条消息的主要字段：
+
+```jsonl
+{"version":"v0.9","createSurface":{"surfaceId":"weather","catalogId":".../basic_catalog.json"}}
 {"version":"v0.9","updateDataModel":{"surfaceId":"weather","path":"/","value":{"city":"Singapore","temperature_c":26}}}
 {"version":"v0.9","updateComponents":{"surfaceId":"weather","components":[{"id":"root","component":"Column","children":["heroCard","cityCard"]}]}}
 ```
 
-这里的 `catalogId` 可以理解成这块 surface 使用的组件目录。客户端先声明自己支持哪套 catalog，服务端或 agent 在 `createSurface` 里选中同一个 ID；后面的 `Column`、`Card`、`Button` 这类组件名和参数，才会按这套目录来解释。它不是让 App 去这个 URL 动态下载代码，更像是双方约定“这次 UI 只能从这本组件词典里选词”。
+`createSurface` 建立一块可以继续更新的 UI；`updateDataModel` 写入数据；`updateComponents` 写入带 ID 的组件树。结构、数据和 Surface 生命周期在协议里各有自己的位置。
 
-这套输出里有几个比较 BDUI 的味道：`surfaceId` 表示一块可更新区域，`components` 表示组件结构，`dataModel` 表示状态，`action` 表示用户行为入口。客户端只需要识别这些受控对象，再把它们映射到 Web / Flutter / SwiftUI / Jetpack Compose 等本地组件。
+把真实产物压成无多余空格的形式，再用 OpenUI 官方 benchmark 相同的 `tiktoken.encoding_for_model("gpt-5")` 计算，可以得到下面的数字：
 
-A2UI 的 message 本身是 JSON object，直接流式传输时通常会用 JSONL 表达，一行一个 message；如果走 A2A、MCP 或普通 HTTP，也可以把这些 messages 包在普通 JSON payload 里传输。不过普通 HTTP JSON array 只能算最简单的承载方式，适合小 payload 或已经生成好的 UI。A2UI 真正有价值的场景通常需要 streaming transport，否则既容易等 LLM / tool call 超时，也失去了逐步构建 UI 的意义。因此 A2UI 说自己 transport-agnostic，不等于所有 transport 都同样适合。对生成式 UI 来说，SSE、WebSocket、A2A streaming 这类能持续送 message 的通道，才更接近它的设计预期。
+|本地记录|字符数|GPT-5 tokenizer|输出规模|
+|:---|---:|---:|:---|
+|OpenUI：真实 Gemini Singapore 输出|1,467|432 tokens|17 statements|
+|A2UI：真实 Gemini Singapore 输出|6,747|1,633 tokens|3 messages，66 components|
 
-这也是 A2UI 跨端路线相对清楚的原因。模型输出被压到组件 catalog 里的结构化选择和组合，客户端继续持有可执行代码和组件实现。移动端过去做动态首页、活动位、瀑布流 Cell 时，已经有不少类似经验；A2UI 把 agent 放进了这条链路。
+两行都是 Gemini 3.5 Flash 的真实输出，OpenUI 这一轮少了约 73.5%。A2UI 的 1,633 tokens 里，`updateComponents` 一条消息占 1,482 tokens，主要篇幅都花在 66 个元组件的 ID、类型、属性和引用关系上。
 
-## OpenUI 更像 prompt-driven UI DSL
+OpenUI 官方也把 token efficiency 当作 OpenUI Lang 的主要设计目标。其官方 benchmark 使用 GPT-5.2 在 7 个场景里先生成 OpenUI Lang，再把同一棵 AST 转成 Vercel JSON-Render 和 Thesys C1 JSON。总计结果是 OpenUI Lang 4,800 tokens、Vercel 10,180 tokens、C1 9,948 tokens，分别减少 52.8% 和 51.7%；单个 contact form 场景最高减少 67.1%。这份官方测试覆盖 Vercel 和 C1，本章的 A2UI 数字来自另外一组天气实验。
 
-OpenUI 也会把组件库和 schema 暴露给模型，让模型在受控组件里选择和组合。但它生成时的产物更像一段 **prompt-driven UI DSL**，和传统 BDUI payload 的距离更远。
+OpenUI 在第一次生成里更省输出 token。这个结果同时来自两个地方：一是位置参数和引用让 OpenUI Lang 比 JSON 紧凑；二是本次 OpenUI 使用天气领域组件，A2UI 使用 Basic Catalog 元组件。本轮保留了两套框架各自更自然的用法，因此测到的是整套输出合约的成本；若要单独测语言格式，还需要再做一组相同组件粒度的实验。这边以官方的测试结果（减少~50%）作为主要参考，我们的 demo 场景没有严格限定死 UI 设计（即没有控制变量）。
 
-OpenUI Lang 的输出大概是这种形状：
+## 组件粒度：模型在选卡片，还是在排 Layout
 
-```txt
-root = Stack([header, list, form])
-header = CardHeader("Reserve", "Find a quiet restaurant")
-form = Form([dateField, timeField, submitButton])
-submitButton = Button("Submit", Action([@ToAssistant("Submit reservation")]))
+OpenUI 的 `WeatherHero(...)` 已经包含城市、温度、天气图标、体感和摘要。模型调用一次，React renderer 再把它展开成完整的 hero 区域。
+
+A2UI Basic Catalog 里只有 `Card`、`Column`、`Row`、`Text`、`Icon`、`Divider`、`Button` 等元组件。同一个 hero 需要逐层写出 `heroCard`、`heroBody`、`locationRow`、`temperatureRow` 和各个 Text 节点。本次一共用了 66 个 components，其中 `updateComponents` 一条消息就占 1,482 tokens。
+
+因此，432 和 1,633 同时体现了 DSL 格式与组件粒度。假如 A2UI catalog 预先提供一个 `WeatherCard`，组件数和 payload 都会明显缩小；假如 OpenUI 只开放 `Stack`、`Text`、`Icon` 这些元组件，它也要输出更多 statements。
+
+组件粒度实际决定了模型参与多少设计。Semantic Component 路线让模型选择“用哪张天气卡”；元组件路线让模型继续决定卡片内部有哪些 Row、Column 和 Text。前者更容易稳定落地，后者保留更多布局自由，也会增加 token、生成校验和视觉测试的成本。
+
+这次 A2UI 实验第一次就遇到了一个很具体的例子。Gemini 输出了 70 个 components，协议字段、组件引用和 action 都能通过校验，但它把三个城市按钮排进同一个 Row，Flutter 最终报出右侧 65 pixels 的 `RenderFlex overflow`。随后在 prompt 和 validator 里同时加入“窄屏每行两个城市按钮”的规则，第二次输出收敛为 66 个 components，Singapore 和 London 都完成了原生渲染。
+
+因此，组件树通过 schema 只是第一道检查。元组件越自由，生成端越需要理解 renderer 的实际尺寸约束；截图、overflow log 和多尺寸测试也会逐渐变成生成链路的一部分。
+
+## 后续更新：只改数据，还是重生成 UI
+
+第一次生成的长度只覆盖了一半问题，在UI 显示后，用户点击 London，服务端拿到新的天气数据，框架是否还要把整棵 UI 再描述一遍？
+
+当前 A2UI demo 的组件直接写入了 `"text": "Singapore"` 这类 literal value。点击 London 后，`select_city { city: London }` 会开始下一轮 Gemini 生成，再发送 `createSurface + updateDataModel + updateComponents(66)`；这次真实输出是 1,636 tokens。当前版本先验证完整的 action round trip，数据绑定优化留在下一轮实验。
+
+如果组件已经绑定 Data Model path，完整 London snapshot 的 `updateDataModel` 是 410 个字符、109 tokens；只更新 `/temperature_c` 的消息是 95 个字符、27 tokens。相比重新生成 1,636 tokens，这个差距已经足够说明组件树复用后可能节省的输出成本。
+
+OpenUI 当前 demo 的城市按钮使用 `@ToAssistant("Show Tokyo weather")`，下一轮重新输出完整 UI 程序，共 450 tokens。`Query()` 可以让 runtime 重新请求数据而不生成布局。这里先记录两条路径的输出成本，具体的 binding 机制、Query 生命周期和职责归属放到下一章。
+
+## 流式生成：一行行补齐，还是一条条更新
+
+OpenUI 的渐进单位接近文本。实验把 Singapore fixture 每 37 个字符切成一个 chunk，共 43 个 chunks。第一段到达后，parser 已经能根据 `root = WeatherCanvas(...)` 建立外壳；暂时缺失的 `hero`、`metrics` 等引用会随着后续 statement 到达而补齐。最终得到 17 statements、0 unresolved、0 parser errors。
+
+这条路径的代价也出现在 renderer。浏览器最终画面正常，但 progressive reconciliation 期间记录了 36 条 duplicate-key warnings。parser 证明了语法和引用能够收敛，React renderer 还要处理同一棵树被反复 materialize 时的节点身份。
+
+A2UI 以完整 message 为增量单位。renderer 先处理 `createSurface`，再处理 `updateDataModel` 和 `updateComponents`；组件通过 ID 定位，后续消息继续替换数据或组件。它通常要等一条 JSON message 闭合后再应用，换来的是更明确的更新边界。
+
+两者的 streaming 发生在不同粒度。OpenUI 更关注一轮回答里尽早露出 UI；A2UI 的 message 和 ID 更适合一块会存活较久、还会被后续消息更新的 Surface。
+
+## 数据由模型编，还是由业务系统填
+
+OpenUI + Gemini 的实验还暴露了一个实际的问题，比如当 user message 提供的数据只有当前天气：
+
+```json
+{
+  "city": "Singapore",
+  "temperatureC": 26,
+  "feelsLikeC": 29,
+  "humidity": 82,
+  "windKph": 13,
+  "rainChance": 70
+}
 ```
 
-这里的重点是语言形态。OpenUI 用 named statements 表达 UI，`root` 是入口，后面的语句逐步补齐引用。这个格式对 LLM 友好，也适合流式解析：parser 可以先看到 `root` 和若干未解析引用，再随着后续 chunk 到达补完整棵 UI。
+而 system prompt 的 few-shot example 里同时放了一份 hourly 和 3-day 预测，这导致模型最后输出了下面两条合法的 OpenUI Lang：
 
-因此，OpenUI 粗略看也是“把组件库定义给 AI，让 AI 组装 UI”。但它和传统 BDUI 的亲缘关系弱一些。A2UI 的输出像协议消息，强调 surface、component、data model、action 的分离；OpenUI 的输出像一门紧凑的 UI 表达语言，强调模型能用较少 token、按顺序说出一段可被 renderer 消费的 UI。
+```text
+hourly = HourlyForecast(["20:00", "21:00", "22:00", ...], [26, 26, 26, 25, ...], ["Cloudy", "Shower", ...], $unit)
+daily = DailyForecast(["Today", "Tue", "Wed"], [31, 31, 30], [25, 25, 25], ["Thunderstorms", "Showers", "Cloudy"], [70, 65, 45], $unit)
+```
 
-这个区别会影响后面的运行时问题。A2UI 后续更自然地讨论 data model update、action event、transport 和跨端 renderer；OpenUI 后续更自然地讨论 parser、query / mutation、binding，以及这套 DSL 怎样在 Web renderer 里继续工作。
+本轮 snapshot 的字段到 `rainChance` 为止，未来预报来自 few-shot 的示范内容。OpenUI 的 parser 表示 0 errors，因为字段类型、组件名称和引用关系全部正确；也即它能检查“这是不是一个合法的 `DailyForecast`”，无法判断“周二 31°C 是否来自天气 API”（数据准确性）。
+
+A2UI 实验里，Python 服务端先选择固定 `WeatherSnapshot`，再把完整 snapshot 放进 user message。Gemini 负责生成 Data Model 和 component tree；validator 要求 `updateDataModel.value` 与服务端 snapshot 逐字段一致，因此 Singapore、London 的 Data Model 都能追到 mock data source。当前组件文字仍是 literal props，captured output 与 snapshot 一致，但 validator 还没有逐项建立 component text 和 Data Model 的对应关系。
+
+产品里的业务数据通常应该保留一条可追踪/观测的来源：模型选择组件和布局，天气、订单、库存等值由 tool/API 返回。例如：OpenUI 可以用 `Query()` 把 tool result 接入组件；A2UI 可以让 backend 写入 `updateDataModel`，组件只绑定对应 path。这样 parser/schema 负责 UI 合法性，业务系统继续负责数据真实性。
+
+## 从产品落地反推选择
+
+OpenUI 的早期 PMF 更接近 Web 和 chat-like GenUI。团队可以跟随服务端快速更新 component library，用紧凑的语言生成一次性卡片、表单和报表，也可以把 `Query()`、`Mutation()` 留在 Web runtime 里执行。它要求团队能控制前端 runtime（本章实验为 React），并持续观察 prompt、parser、renderer 和模型输出质量。
+
+A2UI 更适合已经拥有 native component system 的产品。客户端实现 catalog，Surface 和 Data Model 可以跨多轮继续存在；服务端通过组件 ID 和 data path 更新局部内容。它需要处理 Android、iOS、Flutter/Web 多端组件、catalog version、旧客户端和 transport，这些投入只有在原生体验或长生命周期 Surface 确实重要时才划算。
+
+而开头提到的固定语义组件 vs 原子组件拼凑，很显然还是固定语义组件加成本最低。当前这些 GenUI 协议产生价值的地方，是 UI 结构会随任务改变，或者同一块 Surface 需要持续接收 agent 更新。快速生成一整段新 Web UI 更接近 OpenUI 当前的产品路径；长期维护一块可持续更新的多端原生 UI，或许更能发挥 A2UI 的协议设计。
+
+
+## 参考资料
+
+- [OpenUI Lang Overview @ OpenUI](https://www.openui.com/docs/openui-lang/overview)
+- [OpenUI Token Efficiency Benchmarks @ GitHub](https://github.com/thesysdev/openui/tree/main/benchmarks)
+- [OpenUI Lang Renderer @ OpenUI](https://www.openui.com/docs/openui-lang/renderer)
+- [A2UI Messages @ A2UI](https://a2ui.org/reference/messages/)
+- [A2UI Components & Structure @ A2UI](https://a2ui.org/concepts/components/)
+- [A2UI Data Flow @ A2UI](https://a2ui.org/concepts/data-flow/)

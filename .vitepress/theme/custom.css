@@ -1,0 +1,5 @@
+.book-content img[src$='/a2ui-weather-singapore.png'],
+.book-content img[src$='/a2ui-weather-london.png'] {
+  width: min(420px, 100%);
+  height: auto;
+}

@@ -2,7 +2,7 @@
 
 Thesys is a startup based in San Francisco. Its website describes the company as [The Generative UI Company](https://www.thesys.dev/). It mainly works around UI generation, the Reports API, Agent Builder, and OpenUI Cloud. It is worth watching here because it gives us two connected clues at the same time: a commercial product and an underlying open-source UI framework.
 
-## The Commercial Product: C1
+## The Current Commercial Product: C1
 
 C1 is part of Thesys's commercial GenUI API & Components product line. According to the flow chart in the official docs, the backend calls the C1 service through an OpenAI-compatible API format, receives a C1 Response, and passes it to `<C1Component>` or `<C1Chat>` on the frontend to render an interactive UI.
 

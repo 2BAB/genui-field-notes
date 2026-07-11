@@ -1,6 +1,6 @@
 # Google A2UI 及其生态
 
-本篇范围限制在 A2UI 这套协议化表达，不展开 Google Research 在 AI Mode 里展示过的 Dynamic View。A2UI 官方给自己的定义直接明了：
+本章范围限制在 A2UI 这套协议化表达，不展开 Google Research 在 AI Mode 里展示过的 Dynamic View。A2UI 官方给自己的定义直接明了：
 
 > A2UI (Agent to UI) is a declarative UI protocol for agent-driven interfaces.
 
@@ -42,7 +42,7 @@ headerTitle = TextContent("Reserve a Table", "large-heavy")
 
 A2UI 则选择了更明确的 JSON envelope。组件结构是一组 flat component list，每个组件有自己的 `id`，父组件通过 child id 引用子组件。这样做的好处是：更新一个组件、追加一组数据，都可以变成局部 message，省掉重发整棵深层嵌套树的成本。
 
-这部分也为后面的第 6 篇做了铺垫：如果只问“模型生成了什么”，OpenUI 和 A2UI 已经给出了两种很不同的答案。OpenUI 更像 DSL 程序；A2UI 则更像传统 BDUI 消息格式加上流式化的新外壳。
+这部分也为后面的第 6 章做了铺垫：如果只问“模型生成了什么”，OpenUI 和 A2UI 已经给出了两种很不同的答案。OpenUI 更像 DSL 程序；A2UI 则更像传统 BDUI 消息格式加上流式化的新外壳。
 
 ## 跨端是 A2UI 的特色
 

@@ -6,7 +6,7 @@ This chapter narrows the scope to A2UI as a protocol-level expression. It does n
 
 The official docs further explain that A2UI lets agents generate JSON messages, and clients render those messages with their own native components across Web, mobile, and desktop, while avoiding arbitrary code execution. Three words matter here: `declarative`, `messages`, and `native components`. Its main route is to turn "what should be shown" into structured intent, then hand that intent to a renderer inside the host application. Asking a model to write temporary frontend code, or putting an iframe into the host app, belongs to the alternative routes A2UI compares against. They are not what A2UI is trying to do.
 
-## Core Concepts
+## Core Concepts and Objects
 
 When reading the A2UI docs, these concepts are the easiest starting point:
 
@@ -50,7 +50,7 @@ A2UI puts portability near the front of its documentation: the same agent respon
 
 > The Flutter Gen UI SDK uses the A2UI protocol
 
-Native Android and iOS apps are usually not good places to dynamically deliver executable code, especially native code. Feasible paths often involve a JavaScript runtime, or quietly embedding a custom interpreter such as Lua. That is a large constraint for OpenUI. A2UI instead asks the server or agent to send declarative data, and the renderer maps that data locally into Flutter widgets, SwiftUI views, Jetpack Compose composables, or Web components.
+Native Android and iOS apps are usually not good places to dynamically deliver executable code, especially native code. Feasible paths often involve a JavaScript runtime, or quietly embedding a custom interpreter such as Lua. That is a large constraint for OpenUI. A2UI instead asks the server or agent to send declarative data, and the renderer maps that data locally into Flutter widgets, SwiftUI views, or Jetpack Compose composables.
 
 It gives mobile apps a relatively clear engineering path: the UI can be dynamically assembled, while executable code and component implementations still belong to the client. By comparison, OpenUI / Thesys C1 currently lands more naturally on the Web / React route. Mapping the same OpenUI Lang smoothly to Kotlin / Swift native components is not just an interpreter problem; it also brings more semantic and platform-runtime integration work.
 

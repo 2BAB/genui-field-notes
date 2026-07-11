@@ -1,4 +1,4 @@
-# GenUI in Vercel AI SDK
+# The GenUI Feature in Vercel AI SDK
 
 After looking at OpenUI and A2UI, Vercel AI SDK UI feels like a clear drop in what is being generated. Vercel's current [Generative UI](https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces) capability is basically a direct mapping from the result of one tool call to **one React component**.
 

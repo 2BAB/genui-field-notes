@@ -2,17 +2,17 @@
 
 看完 OpenUI 和 A2UI，再看 Vercel AI SDK UI，会有一种明显的落差。基本上 Vercel 当前的 [Generative UI](https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces) 功能，只是把一次 tool call 的结果直接映射给**一个 React component** 渲染。
 
-以本文的查天气 Demo 为例，在 Vercel 的这个流程里，模型没有获得任何组件 catalog，也不需要决定一张卡片里放几个 `Row`、`Text` 或 `Button`。它纯粹从 tools 里选出 `weather`，生成查询参数，前端看到返回 stream 里的 `tool-weather` part 后，再显示一张已经写好的天气卡片。
+以本章的查天气 Demo 为例，在 Vercel 的这个流程里，模型没有获得任何组件 catalog，也不需要决定一张卡片里放几个 `Row`、`Text` 或 `Button`。它纯粹从 tools 里选出 `weather`，生成查询参数，前端看到返回 stream 里的 `tool-weather` part 后，再显示一张已经写好的天气卡片。
 
-本文把这种典型结构概括为：
+本章把这种典型结构概括为：
 
 ```text
 Tool -> Semantic Component 的映射式 GenUI
 ```
 
-`Semantic Component` 不是 AI SDK 里的正式类型，它只是本文为了比较而使用的称呼，指天气卡片、股票卡片、订单卡片这类带有完整业务语义的组件。它们的布局、样式和内部交互都已经写在应用里，粒度远大于 `Card`、`Icon`、`Text` 这些元组件。
+`Semantic Component` 不是 AI SDK 里的正式类型，它只是本章为了比较而使用的称呼，指天气卡片、股票卡片、订单卡片这类带有完整业务语义的组件。它们的布局、样式和内部交互都已经写在应用里，粒度远大于 `Card`、`Icon`、`Text` 这些元组件。
 
-AI SDK 没有强制 tool 和组件一一对应；一个 tool 也可以只显示文字，多个 tool 也可以共用 renderer。不过官方教程和 Vercel 自己的 Chatbot 都采用了很直接的写法：每种 `tool-${toolName}` part，在前端分支里映射到一张对应的 Semantic Component。因此，在这篇文章讨论的范围内，可以粗略把它看成一条近似一一对应的路线。
+AI SDK 没有强制 tool 和组件一一对应；一个 tool 也可以只显示文字，多个 tool 也可以共用 renderer。不过官方教程和 Vercel 自己的 Chatbot 都采用了很直接的写法：每种 `tool-${toolName}` part，在前端分支里映射到一张对应的 Semantic Component。因此，在本章讨论的范围内，可以粗略把它看成一条近似一一对应的路线。
 
 ## Tool 到 Semantic Component
 
