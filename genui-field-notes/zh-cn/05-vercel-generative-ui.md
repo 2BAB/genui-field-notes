@@ -96,7 +96,7 @@ output-error
 approval-requested
 ```
 
-前端可以在参数还没完整生成时展示 skeleton，在 tool 执行中显示 loading，拿到 output 后切换成结果卡片，失败或需要用户批准时显示另外的状态。它没有 A2UI 的 `Surface`、`Catalog`、`Data Model` 和 `Action`，但它把 chat-like UI 最常见的 tool execution lifecycle 整理成了可消费的前端状态。
+前端可以在参数还没完整生成时展示 skeleton，在 tool 执行中显示 loading，拿到 output 后切换成结果卡片，失败或需要用户批准时显示另外的状态。此外还有 `approval-responded`、`output-denied` 等状态，下文的批准流程会用到。它没有 A2UI 的 `Surface`、`Catalog`、`Data Model` 和 `Action`，但它把 chat-like UI 最常见的 tool execution lifecycle 整理成了可消费的前端状态。
 
 ## 天气卡片 Demo
 

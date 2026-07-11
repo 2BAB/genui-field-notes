@@ -2,11 +2,11 @@ import { defineMinibook } from '@2bab/minibook-kit/config'
 
 const englishSidebar = [
   {
-    text: '1. What Is GenUI',
+    text: '1. Introduction',
     link: '/'
   },
   {
-    text: '2. Why Chat-like GenUI Gets So Much Attention',
+    text: '2. Chat-like GenUI and Other Forms',
     link: '/02-chat-like-genui'
   },
   {
@@ -41,11 +41,11 @@ const englishSidebar = [
 
 const chineseSidebar = [
   {
-    text: '1. 什么是 GenUI',
+    text: '1. 简介',
     link: '/zh-cn/'
   },
   {
-    text: '2. 为什么 GenUI 现在很多在讨论 chat-like GenUI',
+    text: '2. Chat-like GenUI 与其他形态',
     link: '/zh-cn/02-chat-like-genui'
   },
   {

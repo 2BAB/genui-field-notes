@@ -6,15 +6,15 @@ GenUI 领域里，目前很多讨论焦点会先落到 chat-like GenUI。这里�
 
 > 现在 A2UI 和 AG-UI 的重心仍然很明显地落在 **chat-like style** 上
 
-现在回头看，这里面的商业诉求是很明显的，即如何跟世界的焦点更加重合。但这节我们更关心的是另一个角度，也是技术田野调查应该看的：Chat-like GenUI 可以把生成式 UI 的复杂度压在一次对话、一张卡片、一个 panel 或一段 response 里，是一个很好的起点。
+现在回头看，这里面的商业诉求是很明显的，即与当下世界的注意力所在重合。但这节我们更关心的是另一个角度，也是技术田野调查应该看的：Chat-like GenUI 可以把生成式 UI 的复杂度压在一次对话、一张卡片、一个 panel 或一段 response 里，是一个很好的起点。
 
 ## 一次对话里的复杂度
 
-一个 chat-like GenUI response 通常不需要生成完整 App，更常见的形态是推荐列表、对比表格、信息卡片、确认按钮、图表。对不少 AI Native 产品来说，这个范围很舒服：UI 的生命周期短，状态不会页面，用户接受度快，例如把它理解成一种 markdown 的复杂扩展。（注：这里虽是个技术比喻，但其实普通用户就是不在意你这里用的什么技术，所以认知上就是一种更顺手的丰富扩展）
+一个 chat-like GenUI response 通常不需要生成完整 App，更常见的形态是推荐列表、对比表格、信息卡片、确认按钮、图表。对不少 AI Native 产品来说，这个范围很舒服：UI 的生命周期短，状态不会跨页面保存，用户接受得快，例如把它理解成一种 markdown 的复杂扩展。（注：这里虽是个技术比喻，但其实普通用户就是不在意你这里用的什么技术，所以认知上就是一种更顺手的丰富扩展）
 
 而这，会直接影响工程实现：组件可以提前定义，布局可以限制在少数几种组合里，action 也可以先从低风险动作开始，比如“换几个选项”“展开更多信息”“把这个选择发回 assistant”。当单次 response 的复杂度不高时，上层的行业 predefined components 的约束就足够产生一个可用的体验。
 
-C1、OpenUI、A2UI、AG-UI 这些方向虽然方向可能不同，但很多 demo 都在做类似的事：先给出 component catalog、schema、action 类型和 style preset，再让模型在这个集合里组装。模型负责的是“在边界内组合”，产品界面的主结构仍然掌握在宿主应用手里。
+C1、OpenUI、A2UI、AG-UI 这些项目虽然方向可能不同，但很多 demo 都在做类似的事：先给出 component catalog、schema、action 类型和 style preset，再让模型在这个集合里组装。模型负责的是“在边界内组合”，产品界面的主结构仍然掌握在宿主应用手里。
 
 ## Schema 和 Runtime
 
@@ -32,15 +32,15 @@ A2UI / AG-UI 这组例子适合放在这里做一个轻量参照。我之前把�
 
 > ...新闻 App 仍然需要阅读页，播客 App 仍然需要单集页介绍，杂志仍然需要专题...
 
-这类场景更接近一种 general GenUI 的形式。问题从“一轮对话里生成一段结果”，扩展成“让原有产品里的内容表面理解内容、状态和用户意图”，然后再动态组织布局、推荐、评论、分享、广告、延伸阅读和行动入口。
+这类场景更接近一种 general GenUI 的形式。问题从“一轮对话里生成一段结果”，扩展成“让原有产品里的内容表面（content surface）理解自己承载的内容、状态和用户意图”，然后再动态组织布局、推荐、评论、分享、广告、延伸阅读和行动入口。
 
-Google Research 在 2025-11-18 发布的 [Generative UI 文章](https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/) 里，把这个形式推得更远。原文说，这套实现会动态创建 visual experiences 和 interactive interfaces，例子包括 `web pages, games, tools, and applications`，并根据任意 question、instruction 或 prompt 自动设计和定制。这个组件或技术称之为 **Dynamic View** ，Google 的说法是 Gemini 会为每个 prompt 设计并编写 `a fully customized interactive response`；实现部分则写明使用 Gemini 3 Pro，并加上 tool access、system instructions 和 post-processing。因此，这里我们把它理解成上文讨论的更自由的 GenUI 方向。
+Google Research 在 2025-11-18 发布的 [Generative UI 文章](https://research.google/blog/generative-ui-a-rich-custom-visual-interactive-user-experience-for-any-prompt/) 里，把这个形式推得更远。原文说，这套实现会动态创建 visual experiences 和 interactive interfaces，例子包括 `web pages, games, tools, and applications`，并根据任意 question、instruction 或 prompt 自动设计和定制。按原文的说法，它目前落在两个入口上：Gemini app 里一个名为 **dynamic view** 的实验功能，以及 Google Search 的 AI Mode。在 dynamic view 里，Gemini 会为每个 prompt 设计并编写 `a fully customized interactive response`；实现部分则写明使用 Gemini 3 Pro，并加上 tool access、system instructions 和 post-processing。因此，这里我们把它理解成上文讨论的更自由的 GenUI 方向。
 
 ![Google AI Mode dynamic view example](../public/media/google-ai-mode-rna-dynamic-view.webp)
 
-*图源：Google Research，文章中的 AI Mode / dynamic view 示例视频。*
+*图源：Google Research 文章中的示例视频。*
 
-这个方向当然更接近“自由”的 GenUI，但从外部可见的产品形态看，它还没有变成一个全量实验后的通用入口。至少在我当前能打开的 Google Search + AI Mode 里，未体验到文章示例里那种根据问答生成完整 Dynamic View 的能力。能稳定看到的，还是 Google 搜索页里更传统的动态组件：比如世界杯查询会出现赛程、积分榜、淘汰赛、球员数据这些模块。
+这个方向当然更接近“自由”的 GenUI，但从外部可见的产品形态看，它还没有变成一个全量实验后的通用入口。至少在我当前能打开的 Google Search + AI Mode 里，未体验到文章示例里那种为一次问答生成完整定制界面的能力。能稳定看到的，还是 Google 搜索页里更传统的动态组件：比如世界杯查询会出现赛程、积分榜、淘汰赛、球员数据这些模块。
 
 下面两张截图能说明这个差异。同样围绕世界杯信息，AI Mode 更像把结果渲染成一张 Markdown table；Google Search 的普通结果页则已经有明确的垂类 UI，包括 tab、淘汰赛树、积分榜和球员数据。
 
@@ -58,7 +58,7 @@ LLM 介入后，这条路线可以逐步加自由度，但 General GenUI 的落�
 
 ## 平台和技术选项
 
-最后，聊聊平台技术和选择。现在很多 AI Native 产品明显更偏 Web Frontend，一个重要原因是 Web 对“动态性”“合规性”的限制更少；而 GenUI 在多平台考量上就会有一些受阻，主要是 Android 和 iOS 原生 App 都不能随便动态下发可执行代码，如果想在手机上做 GenUI，通常只能走受控组件/BDUI，或者 RN 这类更接近 Web runtime 的方案。因此，多数东西先在 Web 试点是和文初的思路相呼应：它们都是一种从更局部的开始，找到合适的技术落地——chat-like 就是一种。当然，过去也有不少电商 App 首页长期使用 RN 或其他动态化框架来做活动位和瀑布流里的 Cell，这条经验未来在 GenUI 里可能也有它的特别打法。
+最后，聊聊平台技术和选择。现在很多 AI Native 产品明显更偏 Web Frontend，一个重要原因是 Web 对“动态性”“合规性”的限制更少；而 GenUI 在多平台考量上就会有一些受阻，主要是 Android 和 iOS 原生 App 都不能随便动态下发可执行代码，如果想在手机上做 GenUI，通常只能走受控组件/BDUI，或者 RN 这类更接近 Web runtime 的方案。因此，多数东西先在 Web 试点是和文初的思路相呼应：它们都是从更局部的场景开始，找到合适的技术落地——chat-like 就是一种。当然，过去也有不少电商 App 首页长期使用 RN 或其他动态化框架来做活动位和瀑布流里的 Cell，这条经验未来在 GenUI 里可能也有它的特别打法。
 
 
 ## 参考资料

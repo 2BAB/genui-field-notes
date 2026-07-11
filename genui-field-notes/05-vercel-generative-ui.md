@@ -96,7 +96,7 @@ output-error
 approval-requested
 ```
 
-The frontend can show a skeleton while arguments are still streaming, display a loading state while the tool runs, switch to a result card when output arrives, and render separate states for errors or approval requests. AI SDK has no A2UI-style `Surface`, `Catalog`, `Data Model`, or `Action`, but it turns the common tool execution lifecycle of a chat-like UI into frontend state that an application can consume.
+The frontend can show a skeleton while arguments are still streaming, display a loading state while the tool runs, switch to a result card when output arrives, and render separate states for errors or approval requests. There are also states such as `approval-responded` and `output-denied`, which appear in the approval flow below. AI SDK has no A2UI-style `Surface`, `Catalog`, `Data Model`, or `Action`, but it turns the common tool execution lifecycle of a chat-like UI into frontend state that an application can consume.
 
 ## Weather Card Demo
 

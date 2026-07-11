@@ -42,7 +42,7 @@ headerTitle = TextContent("Reserve a Table", "large-heavy")
 
 A2UI 则选择了更明确的 JSON envelope。组件结构是一组 flat component list，每个组件有自己的 `id`，父组件通过 child id 引用子组件。这样做的好处是：更新一个组件、追加一组数据，都可以变成局部 message，省掉重发整棵深层嵌套树的成本。
 
-这部分也为后面的第 6 篇做了铺垫：如果只问“模型生成了什么”，OpenUI 和 A2UI 已经给出了两种很不同的答案。OpenUI 更像 DSL 程序；A2UI 则偏传统 BDUI 的消息格式换了新的流式化。
+这部分也为后面的第 6 篇做了铺垫：如果只问“模型生成了什么”，OpenUI 和 A2UI 已经给出了两种很不同的答案。OpenUI 更像 DSL 程序；A2UI 则更像传统 BDUI 消息格式加上流式化的新外壳。
 
 ## 跨端是 A2UI 的特色
 
@@ -50,7 +50,7 @@ A2UI 的文档把 portability 放在很前面：同一份 agent response 可以�
 
 > The Flutter Gen UI SDK uses the A2UI protocol
 
-Android 和 iOS 原生 App 通常不适合动态下发可执行代码（特别原生的），可行路径只有 JavaScript 的执行环境或者悄悄放进去一个自实现的 Lua 解释器等，这对 OpenUI 是比较大的限制。所以 A2UI 服务端或 agent 只下发声明式数据，renderer 在本地把这些数据映射成 Flutter widget、SwiftUI view 或 Jetpack Compose composable。
+Android 和 iOS 原生 App 通常不适合动态下发可执行代码（尤其是原生代码），可行路径通常是 JavaScript 执行环境，或内嵌一个自实现的解释器（如 Lua），这对 OpenUI 是比较大的限制。所以 A2UI 服务端或 agent 只下发声明式数据，renderer 在本地把这些数据映射成 Flutter widget、SwiftUI view 或 Jetpack Compose composable。
 
 它给移动端 App 指了一条比较清楚的工程路径：UI 可以动态组合，但代码和组件实现仍然属于客户端。相比之下，OpenUI / Thesys C1 当前更自然地落在 Web / React 这条线上；要让同一套 OpenUI Lang 很自然地映射到 Kotlin / Swift 原生组件，不仅仅是解释器层面的实现复杂度，还会面对更多语义和平台 runtime 对接问题。
 
@@ -60,11 +60,11 @@ Android 和 iOS 原生 App 通常不适合动态下发可执行代码（特别�
 
 A2UI 自己只是 UI payload / schema / renderer contract，真正接入到产品时，还需要周边生态配合。
 
-一个常见的库是 AG-UI。AG-UI 更像 runtime/event pipe，负责 agent execution、文本流、tool call、state、user input 等事件。除此之外，一个名为 CopilotKit 的库又能把 AG-UI 和 A2UI 串进 React / Next 这类前端应用里。这样看会更清楚：A2UI 负责“要显示什么 UI”，AG-UI 负责“agent 和 UI 怎样持续通信”，CopilotKit、Flutter GenUI 这类项目负责把它接进具体应用框架。
+一个常见的搭配是 AG-UI。AG-UI 更像 runtime/event pipe，负责 agent execution、文本流、tool call、state、user input 等事件。除此之外，一个名为 CopilotKit 的库又能把 AG-UI 和 A2UI 串进 React / Next 这类前端应用里。这样看会更清楚：A2UI 负责“要显示什么 UI”，AG-UI 负责“agent 和 UI 怎样持续通信”，CopilotKit、Flutter GenUI 这类项目负责把它接进具体应用框架。
 
 ## Flutter 天气卡片 demo
 
-为了看 A2UI 在移动端实际长什么样，我之前做了一个本地 Flutter 天气 demo。这个 demo 里的服务端同理不是临时生成 Flutter 代码；Flutter App 通过 `genui` / `genui_a2a` 连接一个 Python A2A server，服务端根据 mock weather 数据返回文本和 A2UI data parts，Flutter 端再用 `SurfaceController` 渲染成原生 widget。
+为了看 A2UI 在移动端实际长什么样，我之前做了一个本地 Flutter 天气 demo。这个 demo 里的服务端同样不是临时生成 Flutter 代码；Flutter App 通过 `genui` / `genui_a2a` 连接一个 Python A2A server，服务端根据 mock weather 数据返回文本和 A2UI data parts，Flutter 端再用 `SurfaceController` 渲染成原生 widget。
 
 ![Flutter GenUI weather card demo](../public/media/flutter-genui-weather-card.png)
 
@@ -201,7 +201,7 @@ Flutter App
 }
 ```
 
-服务端识别 `select_city`，查出 London 的 mock weather，再返回新的 `updateDataModel` 和 `updateComponents`。Flutter 端重新渲染后，主卡变成 London，`londonButton.variant` 也会变成 `primary`。一个简单的 IO 小任务让我们看到了它继续接收用户动作、更新数据、替换组件等的一系列动作。
+服务端识别 `select_city`，查出 London 的 mock weather，再返回新的 `updateDataModel` 和 `updateComponents`。Flutter 端重新渲染后，主卡变成 London，`londonButton.variant` 也会变成 `primary`。一次完整的交互往返，让我们看到了它继续接收用户动作、更新数据、替换组件的一系列动作。
 
 
 ## 参考资料
