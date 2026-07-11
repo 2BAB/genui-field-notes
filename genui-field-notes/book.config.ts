@@ -18,7 +18,7 @@ const englishSidebar = [
     link: '/04-google-a2ui'
   },
   {
-    text: "5. Vercel's Generative UI Practice",
+    text: '5. GenUI in Vercel AI SDK',
     link: '/05-vercel-generative-ui'
   },
   {
@@ -57,7 +57,7 @@ const chineseSidebar = [
     link: '/zh-cn/04-google-a2ui'
   },
   {
-    text: '5. Vercel 的生成式 UI 实践',
+    text: '5. Vercel AI SDK 的 GenUI 功能',
     link: '/zh-cn/05-vercel-generative-ui'
   },
   {

@@ -1,4 +1,4 @@
-# Vercel 的生成式 UI 实践
+# Vercel AI SDK 的 GenUI 功能
 
 看完 OpenUI 和 A2UI，再看 Vercel AI SDK UI，会有一种明显的落差。基本上 Vercel 当前的 [Generative UI](https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces) 功能，只是把一次 tool call 的结果直接映射给**一个 React component** 渲染。
 
