@@ -201,7 +201,7 @@ Buttons use the same chain. When the user taps London, Flutter sends an A2UI act
 }
 ```
 
-The server recognizes `select_city`, looks up London's mock weather, then returns a new `updateDataModel` and `updateComponents`. After Flutter re-renders, the main card changes to London and `londonButton.variant` becomes `primary`. A simple round trip is enough to show the rest of the chain: receive a user action, update data, replace components, and render again.
+The server recognizes `select_city`, looks up London's mock weather, then returns another three-message A2UI response: `createSurface`, a full `updateDataModel`, and an `updateComponents` containing all 66 components. After Flutter re-renders, the main card changes to London and `londonButton.variant` becomes `primary`. A simple round trip is enough to show the rest of the chain: receive a user action, update data, replace components, and render again.
 
 ## References
 

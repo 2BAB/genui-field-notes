@@ -84,6 +84,8 @@ A2UI 返回的是几条有顺序的消息。为了便于阅读，下面只保留
 
 两行都是 Gemini 3.5 Flash 的真实输出，OpenUI 这一轮少了约 73.5%。A2UI 的 1,633 tokens 里，`updateComponents` 一条消息占 1,482 tokens，主要篇幅都花在 66 个元组件的 ID、类型、属性和引用关系上。
 
+同一组 A2UI 记录里还有一项更直接影响体验的数据：Singapore 一轮 Gemini generation latency 为 14,057 ms，London action 为 11,977 ms。当前实现会等完整 JSONL 返回并通过校验，再把 A2UI messages 交给客户端，因此首次 Surface 至少要先等这段模型生成结束，之后还有校验和渲染。这两个数字只对应本次实现，A2UI 的理论下限仍需另测；它们也说明 token efficiency 需要和用户实际等待放在一起观察。
+
 OpenUI 官方也把 token efficiency 当作 OpenUI Lang 的主要设计目标。其官方 benchmark 使用 GPT-5.2 在 7 个场景里先生成 OpenUI Lang，再把同一棵 AST 转成 Vercel JSON-Render 和 Thesys C1 JSON。总计结果是 OpenUI Lang 4,800 tokens、Vercel 10,180 tokens、C1 9,948 tokens，分别减少 52.8% 和 51.7%；单个 contact form 场景最高减少 67.1%。这份官方测试覆盖 Vercel 和 C1，本章的 A2UI 数字来自另外一组天气实验。
 
 OpenUI 在第一次生成里更省输出 token。这个结果同时来自两个地方：一是位置参数和引用让 OpenUI Lang 比 JSON 紧凑；二是本次 OpenUI 使用天气领域组件，A2UI 使用 Basic Catalog 元组件。本轮保留了两套框架各自更自然的用法，因此测到的是整套输出合约的成本；若要单独测语言格式，还需要再做一组相同组件粒度的实验。这边以官方的测试结果（减少~50%）作为主要参考，我们的 demo 场景没有严格限定死 UI 设计（即没有控制变量）。
@@ -106,7 +108,7 @@ A2UI Basic Catalog 里只有 `Card`、`Column`、`Row`、`Text`、`Icon`、`Divi
 
 第一次生成的长度只覆盖了一半问题，在UI 显示后，用户点击 London，服务端拿到新的天气数据，框架是否还要把整棵 UI 再描述一遍？
 
-当前 A2UI demo 的组件直接写入了 `"text": "Singapore"` 这类 literal value。点击 London 后，`select_city { city: London }` 会开始下一轮 Gemini 生成，再发送 `createSurface + updateDataModel + updateComponents(66)`；这次真实输出是 1,636 tokens。当前版本先验证完整的 action round trip，数据绑定优化留在下一轮实验。
+本章记录的第一轮 A2UI demo 直接把 `"text": "Singapore"` 这类 literal value 写进组件。点击 London 后，`select_city { city: London }` 会开始下一轮 Gemini 生成，再发送 `createSurface + updateDataModel + updateComponents(66)`；这次真实输出是 1,636 tokens。这一轮先验证完整的 action round trip，后续完成的 data-bound 版本及 payload、rebuild、state preservation 结果放在下一章。
 
 如果组件已经绑定 Data Model path，完整 London snapshot 的 `updateDataModel` 是 410 个字符、109 tokens；只更新 `/temperature_c` 的消息是 95 个字符、27 tokens。相比重新生成 1,636 tokens，这个差距已经足够说明组件树复用后可能节省的输出成本。
 
@@ -146,7 +148,7 @@ daily = DailyForecast(["Today", "Tue", "Wed"], [31, 31, 30], [25, 25, 25], ["Thu
 
 本轮 snapshot 的字段到 `rainChance` 为止，未来预报来自 few-shot 的示范内容。OpenUI 的 parser 表示 0 errors，因为字段类型、组件名称和引用关系全部正确；也即它能检查“这是不是一个合法的 `DailyForecast`”，无法判断“周二 31°C 是否来自天气 API”（数据准确性）。
 
-A2UI 实验里，Python 服务端先选择固定 `WeatherSnapshot`，再把完整 snapshot 放进 user message。Gemini 负责生成 Data Model 和 component tree；validator 要求 `updateDataModel.value` 与服务端 snapshot 逐字段一致，因此 Singapore、London 的 Data Model 都能追到 mock data source。当前组件文字仍是 literal props，captured output 与 snapshot 一致，但 validator 还没有逐项建立 component text 和 Data Model 的对应关系。
+A2UI 实验里，Python 服务端先选择固定 `WeatherSnapshot`，再把完整 snapshot 放进 user message。Gemini 负责生成 Data Model 和 component tree；validator 要求 `updateDataModel.value` 与服务端 snapshot 逐字段一致，因此 Singapore、London 的 Data Model 都能追到 mock data source。本章捕获的两轮 Gemini output 仍使用 literal text props，内容与 snapshot 一致；下一章的 data-bound 版本把 13 个天气文本改为 `/weather/...` bindings。
 
 产品里的业务数据通常应该保留一条可追踪/观测的来源：模型选择组件和布局，天气、订单、库存等值由 tool/API 返回。例如：OpenUI 可以用 `Query()` 把 tool result 接入组件；A2UI 可以让 backend 写入 `updateDataModel`，组件只绑定对应 path。这样 parser/schema 负责 UI 合法性，业务系统继续负责数据真实性。
 

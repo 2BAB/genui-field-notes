@@ -201,7 +201,7 @@ Flutter App
 }
 ```
 
-服务端识别 `select_city`，查出 London 的 mock weather，再返回新的 `updateDataModel` 和 `updateComponents`。Flutter 端重新渲染后，主卡变成 London，`londonButton.variant` 也会变成 `primary`。一次完整的交互往返，让我们看到了它继续接收用户动作、更新数据、替换组件的一系列动作。
+服务端识别 `select_city`，查出 London 的 mock weather，再返回新一轮三条 A2UI messages：`createSurface`、完整的 `updateDataModel`，以及包含全部 66 个组件的 `updateComponents`。Flutter 端重新渲染后，主卡变成 London，`londonButton.variant` 也会变成 `primary`。一次完整的交互往返，让我们看到了它继续接收用户动作、更新数据、替换组件的一系列动作。
 
 
 ## 参考资料
