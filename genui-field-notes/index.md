@@ -19,7 +19,7 @@ This handbook is still being iterated 🚧...current version↓
 
 ![GitHub tag](https://img.shields.io/github/tag/2BAB/genui-field-notes.svg)
 
-The handbook is written by hand. LLMs are used only to assist with translation, proofreading, and polishing. I encourage using AI more in early discovery, demo experiments, and technical discussion, rather than making it the writer of the minibook itself. If you would like to contribute, please visit the [GenUI Field Notes GitHub repo](https://github.com/2BAB/genui-field-notes). For other questions, feel free to [contact me](https://2bab.me/about).
+The handbook is primarily written by hand. LLMs are used only to assist with translation, proofreading, and polishing. I encourage using AI more in early discovery, demo experiments, and technical discussion, rather than making it the writer of the minibook itself. If you would like to contribute, please visit the [GenUI Field Notes GitHub repo](https://github.com/2BAB/genui-field-notes). For other questions, feel free to [contact me](https://2bab.me/about).
 
 ## Contributors
 

@@ -177,9 +177,7 @@ server tool -> approval-requested -> 用户允许或拒绝
 
 text、reasoning、tool input、tool output、custom data 和 metadata 可以沿着同一条 stream 到达浏览器。`useChat` 负责增量合并 message parts，并让 React 根据最新状态重新渲染；配合持久化、transport 和 resume 接口，应用也不用为每一种内容重新设计一套流式协议。
 
-接入成本同样很低。一个已经存在的 Web 产品，只要增加 tool、处理对应的 typed tool part，再把 output 传给现有组件，就能把 agent 执行结果放进对话。设计系统、埋点、权限、无障碍和错误处理仍然留在熟悉的前端代码里。
-
-这套方案更值得看的地方是 agent tool loop 如何变成前端可以消费的 typed state。至于所谓“生成式 UI”，这里确实只是一次很直接的映射：模型选择 Tool，应用选择 Semantic Component。它的表达能力有限，也正因为结构简单，才容易接进已有产品。
+接入成本同样很低。一个已经存在的 Web 产品，只要增加 tool 和预定义的组件，再把 output 传给现有组件，就能把 agent 执行结果以一个预定义的 UI 组件形式展示到对话里。
 
 ## 参考资料
 

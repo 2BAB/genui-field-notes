@@ -177,9 +177,7 @@ There is not much to investigate in the UI expression layer of this route. The m
 
 Text, reasoning, tool input, tool output, custom data, and metadata can travel to the browser over the same stream. `useChat` incrementally merges message parts and lets React render the latest state. With persistence, transport, and resume APIs, an application does not need a separate streaming protocol for every content type.
 
-Integration cost is also low. An existing Web product only needs to add a tool, handle its typed tool part, and pass the output into an existing component to place agent results in a conversation. The design system, analytics, permissions, accessibility, and error handling remain in familiar frontend code.
-
-The part worth studying is how an agent tool loop becomes typed state that the frontend can consume. As for the "generative UI" itself, the mapping is very direct: the model selects a Tool, and the application selects a Semantic Component. Its expressive range is limited. The same simple structure is also what makes it easy to add to an existing product.
+Integration cost is also low. An existing Web product only needs to add a tool and a predefined component, then pass the output to that component to display the agent result in the conversation as predefined UI.
 
 ## References
 
