@@ -155,17 +155,7 @@ tool result 还会被放回下一轮 `ModelMessage`。模型因此知道新加�
 
 Vercel 官方的[天气示例](https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces)也是同样的组织方式：定义 `displayWeather` tool，返回 location、weather 和 temperature，前端遇到 `tool-displayWeather` 后手动渲染 `<Weather {...part.output} />`。Vercel 开源的 [Chatbot](https://github.com/vercel/chatbot) 也把 `getWeather` output 映射到预先写好的 `<Weather />` 组件。换掉数据字段和组件样式，流程基本没有变化。
 
-## 简单带来的工程价值
-
-从 UI 表达层看，这条路线能研究的内容不多。模型生成的是 tool call，元组件结构、数据绑定和局部 UI 更新都没有形成独立协议。不过它把 agent 和前端之间一批琐碎的连接工作收进了统一的 message stream。
-
-text、reasoning、tool input、tool output、custom data 和 metadata 可以沿着同一条 stream 到达浏览器。`useChat` 负责增量合并 message parts，并让 React 根据最新状态重新渲染；配合持久化、transport 和 resume 接口，应用也不用为每一种内容重新设计一套流式协议。
-
-接入成本同样很低。一个已经存在的 Web 产品，只要增加 tool、处理对应的 typed tool part，再把 output 传给现有组件，就能把 agent 执行结果放进对话。设计系统、埋点、权限、无障碍和错误处理仍然留在熟悉的前端代码里。
-
-这套方案更值得看的地方是 agent tool loop 如何变成前端可以消费的 typed state。至于所谓“生成式 UI”，这里确实只是一次很直接的映射：模型选择 Tool，应用选择 Semantic Component。它的表达能力有限，也正因为结构简单，才容易接进已有产品。
-
-### 组件里的按钮如何继续
+## 组件里的按钮如何继续
 
 从界面效果看，官方示例里常见的是 confirmation 和 approval 两类交互，不过它们在 SDK 里的层级不同。approval 是 tool lifecycle 的内置状态：服务端 tool 请求批准后，前端会收到 `approval-requested`，按钮通过 `addToolApprovalResponse()` 回传允许或拒绝。允许后继续执行原来的 tool，拒绝则得到 `output-denied`。
 
@@ -180,6 +170,16 @@ server tool -> approval-requested -> 用户允许或拒绝
 ```
 
 其他自定义按钮行为也需要预先写进对应的 Semantic Component。按钮可以修改本地状态、调用业务 API、用 `sendMessage()` 发起一轮新对话，或者通过上面的 API 补齐当前 tool call。应用还要配置自动提交条件，或手动调用 `sendMessage()`，才能让模型继续处理。下一轮拿到 tool result 或 approval result 后，模型再决定是否调用另一个 tool；新的 typed tool part 仍由前端映射到事先写好的组件。
+
+## 简单带来的工程价值
+
+从 UI 表达层看，这条路线能研究的内容不多。模型生成的是 tool call，元组件结构、数据绑定和局部 UI 更新都没有形成独立协议。不过它把 agent 和前端之间一批琐碎的连接工作收进了统一的 message stream。
+
+text、reasoning、tool input、tool output、custom data 和 metadata 可以沿着同一条 stream 到达浏览器。`useChat` 负责增量合并 message parts，并让 React 根据最新状态重新渲染；配合持久化、transport 和 resume 接口，应用也不用为每一种内容重新设计一套流式协议。
+
+接入成本同样很低。一个已经存在的 Web 产品，只要增加 tool、处理对应的 typed tool part，再把 output 传给现有组件，就能把 agent 执行结果放进对话。设计系统、埋点、权限、无障碍和错误处理仍然留在熟悉的前端代码里。
+
+这套方案更值得看的地方是 agent tool loop 如何变成前端可以消费的 typed state。至于所谓“生成式 UI”，这里确实只是一次很直接的映射：模型选择 Tool，应用选择 Semantic Component。它的表达能力有限，也正因为结构简单，才容易接进已有产品。
 
 ## 参考资料
 

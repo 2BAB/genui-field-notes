@@ -155,17 +155,7 @@ The tool result is also placed into the next `ModelMessage`. The model now knows
 
 Vercel's official [weather example](https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces) uses the same organization. It defines a `displayWeather` tool that returns a location, weather condition, and temperature. When the frontend sees `tool-displayWeather`, it manually renders `<Weather {...part.output} />`. Vercel's open-source [Chatbot](https://github.com/vercel/chatbot) likewise maps `getWeather` output to a prewritten `<Weather />` component. Change the data fields and the component styling, and the flow remains much the same.
 
-## The Engineering Value of Simplicity
-
-There is not much to investigate in the UI expression layer of this route. The model generates a tool call. Primitive component structure, data binding, and local UI updates never become a separate protocol. AI SDK does, however, collect a set of tedious connections between agents and frontends into one message stream.
-
-Text, reasoning, tool input, tool output, custom data, and metadata can travel to the browser over the same stream. `useChat` incrementally merges message parts and lets React render the latest state. With persistence, transport, and resume APIs, an application does not need a separate streaming protocol for every content type.
-
-Integration cost is also low. An existing Web product only needs to add a tool, handle its typed tool part, and pass the output into an existing component to place agent results in a conversation. The design system, analytics, permissions, accessibility, and error handling remain in familiar frontend code.
-
-The part worth studying is how an agent tool loop becomes typed state that the frontend can consume. As for the "generative UI" itself, the mapping is very direct: the model selects a Tool, and the application selects a Semantic Component. Its expressive range is limited. The same simple structure is also what makes it easy to add to an existing product.
-
-### How Buttons Continue the Flow
+## How Buttons Continue the Flow
 
 The official examples commonly show confirmation and approval interactions, but they live at different levels in the SDK. Approval is a built-in state in the tool lifecycle. When a server-side tool requests approval, the frontend receives `approval-requested`. A button sends the user's decision through `addToolApprovalResponse()`. Approval allows the original tool to run, while rejection ends in `output-denied`.
 
@@ -180,6 +170,16 @@ server tool -> approval-requested -> user approves or denies
 ```
 
 Other custom button behavior must also be written into the corresponding Semantic Component ahead of time. A button can update local state, call a business API, start a new conversation turn through `sendMessage()`, or complete the current tool call through the APIs above. The application must configure an automatic submission condition or call `sendMessage()` manually before the model continues. On the next turn, the model receives the tool result or approval response and decides whether to call another tool. The new typed tool part is again mapped by the frontend to a prewritten component.
+
+## The Engineering Value of Simplicity
+
+There is not much to investigate in the UI expression layer of this route. The model generates a tool call. Primitive component structure, data binding, and local UI updates never become a separate protocol. AI SDK does, however, collect a set of tedious connections between agents and frontends into one message stream.
+
+Text, reasoning, tool input, tool output, custom data, and metadata can travel to the browser over the same stream. `useChat` incrementally merges message parts and lets React render the latest state. With persistence, transport, and resume APIs, an application does not need a separate streaming protocol for every content type.
+
+Integration cost is also low. An existing Web product only needs to add a tool, handle its typed tool part, and pass the output into an existing component to place agent results in a conversation. The design system, analytics, permissions, accessibility, and error handling remain in familiar frontend code.
+
+The part worth studying is how an agent tool loop becomes typed state that the frontend can consume. As for the "generative UI" itself, the mapping is very direct: the model selects a Tool, and the application selects a Semantic Component. Its expressive range is limited. The same simple structure is also what makes it easy to add to an existing product.
 
 ## References
 
