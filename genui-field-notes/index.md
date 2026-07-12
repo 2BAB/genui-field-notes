@@ -17,7 +17,7 @@ This minibook follows several early practices that are currently observable: Ope
 
 This minibook is still evolving 🚧...current version↓
 
-![GitHub tag](https://img.shields.io/github/tag/2BAB/genui-field-notes.svg)
+![GitHub tag](https://img.shields.io/github/v/tag/2BAB/genui-field-notes.svg?sort=semver)
 
 I encourage using AI more for early discovery, demo experiments, and technical discussion. The minibook's core ideas remain the author's own. If you would like to contribute, please visit the [GenUI Field Notes GitHub repo](https://github.com/2BAB/genui-field-notes). For other questions, feel free to [contact me](https://2bab.me/about).
 

@@ -17,7 +17,7 @@
 
 小册持续迭代中 🚧...当前版本号↓
 
-![GitHub tag](https://img.shields.io/github/tag/2BAB/genui-field-notes.svg)
+![GitHub tag](https://img.shields.io/github/v/tag/2BAB/genui-field-notes.svg?sort=semver)
 
 鼓励大家把 AI 更多使用在前期的发现探索、 Demo 实验、技术讨论等，而非小册本身的核心想法输出。想参与手册编辑，请访问 GenUI Field Notes 的 [Github Repo](https://github.com/2BAB/genui-field-notes)。其他相关问题，欢迎[联系我](https://2bab.me/about)。
 
