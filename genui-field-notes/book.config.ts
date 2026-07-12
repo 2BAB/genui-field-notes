@@ -83,6 +83,9 @@ export default defineMinibook({
   srcDir: 'genui-field-notes',
   title: 'GenUI Field Notes',
   description: 'Field notes on GenUI cases, UI expression, runtime behavior, and agent development.',
+  analytics: {
+    googleTagId: 'G-PB9N2K8ERH'
+  },
   locales: {
     root: {
       label: 'English',
