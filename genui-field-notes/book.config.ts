@@ -78,6 +78,45 @@ const chineseSidebar = [
   }
 ]
 
+const taiwaneseSidebar = [
+  {
+    text: '1. 簡介',
+    link: '/zh-tw/'
+  },
+  {
+    text: '2. Chat-like GenUI 與其他形態',
+    link: '/zh-tw/02-chat-like-genui'
+  },
+  {
+    text: '3. OpenUI 與 Thesys C1',
+    link: '/zh-tw/03-openui-thesys-c1'
+  },
+  {
+    text: '4. Google A2UI 及其生態系',
+    link: '/zh-tw/04-google-a2ui'
+  },
+  {
+    text: '5. Vercel AI SDK 的 GenUI 功能',
+    link: '/zh-tw/05-vercel-generative-ui'
+  },
+  {
+    text: '6. UI 生成時，不同框架的輸出細節比對',
+    link: '/zh-tw/06-ui-expression-layer'
+  },
+  {
+    text: '7. UI 生成後，不同框架的資料和行為如何繼續流轉',
+    link: '/zh-tw/07-ui-runtime'
+  },
+  {
+    text: '8. Agent 開發裡的 GenUI',
+    link: '/zh-tw/08-agent-development'
+  },
+  {
+    text: '9. Chat-like GenUI 的階段性總結與展望',
+    link: '/zh-tw/09-summary-outlook'
+  }
+]
+
 export default defineMinibook({
   id: 'genui-field-notes',
   srcDir: 'genui-field-notes',
@@ -99,6 +138,14 @@ export default defineMinibook({
       description: '关于 GenUI 案例、表达层、运行时与 Agent 开发的阶段性观察。',
       link: '/zh-cn/',
       sidebar: chineseSidebar
+    },
+    'zh-tw': {
+      label: '繁體中文（台灣）',
+      lang: 'zh-TW',
+      title: 'GenUI 的田野調查筆記',
+      description: '關於 GenUI 案例、表達層、runtime 與 Agent 開發的階段性觀察。',
+      link: '/zh-tw/',
+      sidebar: taiwaneseSidebar
     }
   }
 })

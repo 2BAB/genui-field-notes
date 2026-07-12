@@ -2,7 +2,7 @@
 
 A compact minibook for observing GenUI cases, UI expression, runtime behavior, and agent development.
 
-Read it in [English](https://genui-field-notes.2bab.com/) or [简体中文](https://genui-field-notes.2bab.com/zh-cn/).
+Read it in [English](https://genui-field-notes.2bab.com/), [简体中文](https://genui-field-notes.2bab.com/zh-cn/), or [繁體中文（台灣）](https://genui-field-notes.2bab.com/zh-tw/).
 
 ## Local Development
 
