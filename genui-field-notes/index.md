@@ -15,11 +15,11 @@ This minibook follows several early practices that are currently observable: Ope
 
 ## About
 
-This handbook is still being iterated 🚧...current version↓
+This minibook is still evolving 🚧...current version↓
 
 ![GitHub tag](https://img.shields.io/github/tag/2BAB/genui-field-notes.svg)
 
-The handbook is primarily written by hand. LLMs are used only to assist with translation, proofreading, and polishing. I encourage using AI more in early discovery, demo experiments, and technical discussion, rather than making it the writer of the minibook itself. The experiment code, model requests, raw output, runtime logs, and screenshots used in this book are kept in a companion evidence repository. It is currently being organized and will be made public after redaction and directory cleanup. If you would like to contribute, please visit the [GenUI Field Notes GitHub repo](https://github.com/2BAB/genui-field-notes). For other questions, feel free to [contact me](https://2bab.me/about).
+I encourage using AI more for early discovery, demo experiments, and technical discussion. The minibook's core ideas remain the author's own. If you would like to contribute, please visit the [GenUI Field Notes GitHub repo](https://github.com/2BAB/genui-field-notes). For other questions, feel free to [contact me](https://2bab.me/about).
 
 ## Contributors
 

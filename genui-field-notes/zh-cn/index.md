@@ -15,11 +15,11 @@
 
 ## 关于
 
-手册持续迭代中 🚧...当前版本号↓
+小册持续迭代中 🚧...当前版本号↓
 
 ![GitHub tag](https://img.shields.io/github/tag/2BAB/genui-field-notes.svg)
 
-手册内容主要是人工编写，LLM 仅辅助翻译、纠错与润色。鼓励大家把 AI 更多使用在前期的发现探索、 Demo 实验、技术讨论等，而非小册写作本身。本册涉及的实验代码、模型请求、raw output、运行日志和截图保存在配套实验仓库中，目前仍在整理，完成脱敏和目录整理后公开。想参与手册编辑，请访问 GenUI Field Notes 的 [Github Repo](https://github.com/2BAB/genui-field-notes)。其他相关问题，欢迎[联系我](https://2bab.me/about)。
+鼓励大家把 AI 更多使用在前期的发现探索、 Demo 实验、技术讨论等，而非小册本身的核心想法输出。想参与手册编辑，请访问 GenUI Field Notes 的 [Github Repo](https://github.com/2BAB/genui-field-notes)。其他相关问题，欢迎[联系我](https://2bab.me/about)。
 
 ## 贡献者名单
 
