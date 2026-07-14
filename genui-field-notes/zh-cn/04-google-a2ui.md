@@ -18,6 +18,10 @@
 
 A2UI 把这些对象拆解开后，生成式 UI 就不再只是“一段会被渲染的文本”，它更像一组按顺序到达的更新：先创建 surface，再补组件结构，再填数据，后续用户动作继续回到同一条链路里。
 
+![A2UI 端到端数据流](../public/media/a2ui-end-to-end-data-flow.webp)
+
+*A2UI 端到端数据流示意：服务端流式下发、客户端渲染、用户动作回传，再进入下一轮更新。图中沿用了早期协议命名。*
+
 ## 生成时输出什么
 
 按照当前文档里的 v0.9 / v0.9.1 形态，A2UI 的 server-to-client 输出主要围绕四类消息：`createSurface`、`updateComponents`、`updateDataModel` 和 `deleteSurface`。官方站点目前把 v0.9.1 标为 Current，v1.0 仍放在 Candidate 下；下文 demo 使用的是 Flutter GenUI 当前支持的 A2UI v0.9 路径。

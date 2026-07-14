@@ -18,6 +18,10 @@ When reading the A2UI docs, these concepts are the easiest starting point:
 
 After A2UI separates these objects, generative UI is no longer just "some text that can be rendered". It looks more like a sequence of ordered updates: create a surface first, add component structure, fill in data, then let later user actions continue through the same chain.
 
+![A2UI end-to-end data flow](./public/media/a2ui-end-to-end-data-flow.webp)
+
+*A2UI's end-to-end data flow: server streaming, client rendering, user-action return, and the next update cycle. The diagram uses earlier protocol names.*
+
 ## What Gets Generated
 
 In the current v0.9 / v0.9.1 shape documented by A2UI, server-to-client output mainly revolves around four message types: `createSurface`, `updateComponents`, `updateDataModel`, and `deleteSurface`. The official site currently marks v0.9.1 as Current, while v1.0 is still under Candidate. The demo below uses the A2UI v0.9 path currently supported by Flutter GenUI.
