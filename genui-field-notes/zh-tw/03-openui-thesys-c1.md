@@ -14,7 +14,7 @@ C1 是 Thesys 商用產品線裡的 GenUI API & Components。依照官方說明�
 
 ![Thesys C1 embed demo](../public/media/thesys-agent.webp)
 
-從 Console 端來看，C1 除了模型 API，還有一層讓產品團隊設定 agent 的介面。這個介面可以設定資料來源、視覺 preset、應用程式名稱、描述、版面和 conversation starters，並在右側即時預覽生成的互動介面。
+從 Console 端來看，C1 除了模型 API，還提供一層供業務端設定 agent 的產品介面。這個介面可以設定資料來源、視覺 preset、應用程式名稱、描述、版面和 conversation starters，並在右側即時預覽生成的互動介面。
 
 ![Thesys C1 Console data panel](../public/media/c1-console-data.png)
 
@@ -25,7 +25,7 @@ C1 是 Thesys 商用產品線裡的 GenUI API & Components。依照官方說明�
 
 ## OpenUI 的出現
 
-從公開發布時間來看，OpenUI 是 Thesys 後來開放原始碼的表達層與 runtime。官方說明把它分成 Library、Prompt Generator、Parser、Renderer 幾個部分：應用程式先定義元件庫，生成 system prompt，模型輸出 OpenUI Lang，再由 parser 和 renderer 渲染成 React UI。OpenUI 和 C1 有明顯的上下游關係：
+從公開發布時間來看，OpenUI 是 Thesys 後來開放原始碼的表達層與 runtime。官方文件把它分成 Library、Prompt Generator、Parser、Renderer 幾個部分：應用程式先定義元件庫，生成 system prompt，模型輸出 OpenUI Lang，再由 parser 和 renderer 渲染成 React UI。OpenUI 和 C1 有明顯的上下游關係：
 
 ![Thesys Docs OpenUI Support](../public/media/thesys-docs-openui-support.png)
 
@@ -41,11 +41,11 @@ C1 是 Thesys 商用產品線裡的 GenUI API & Components。依照官方說明�
 
 我在本機 demo 裡看到的這份 prompt，大致可以拆成三層：
 
-- **OpenUI 的基礎輸出規則**：先把模型的輸出通道限縮為 `openui-lang`。進入點必須叫 `root`，每一行都依照 `identifier = Expression` 撰寫，最後不能包在 Markdown、JSON、HTML 或程式碼圍欄裡。<br>
+- **OpenUI 的基礎輸出規則**：先把模型的輸出通道限縮為 `openui-lang`。進入點必須叫 `root`，每一行都依照 `identifier = Expression` 撰寫，最後不能包在 Markdown、JSON、HTML 或程式碼圍欄裡。
   例子：`Your ENTIRE response must be valid openui-lang code`；`root is the entry point`。
-- **元件庫展開後的完整 schema**：這是佔篇幅最大的一層。它把 runtime 能辨識的元件、參數順序、欄位型別、action 表達式、`$binding`、表單驗證等都交給模型。`CardHeader`、`TextContent`、`Carousel`、`Form`、`Button`、`FollowUpBlock` 這些元件能否正確呼叫，主要取決於這一層是否說清楚。<br>
+- **元件庫展開後的完整 schema**：這是佔篇幅最大的一層。它把 runtime 能辨識的元件、參數順序、欄位型別、action 表達式、`$binding`、表單驗證等都交給模型。`CardHeader`、`TextContent`、`Carousel`、`Form`、`Button`、`FollowUpBlock` 這些元件能否正確呼叫，主要取決於這一層是否說清楚。
   例子（簽名有簡化）：`Button(label, action?, variant?)`；`Carousel([[title, image, description, tags], ...])`。
-- **Demo 自行補上的任務約束**：最後才是訂位情境本身。這裡會要求優先使用 OpenUI 內建 chat 元件，送出後只做模擬確認，不能聲稱已完成真實訂位。在真實情況下，agent 設定會有所不同，例如某些按鈕可以透過 `Action([@ToAssistant(...)])` 把點擊轉換成下一輪對話，這個機制適合「換幾個選項」「繼續說明」「幫我比較一下」這類低風險動作；`Submit reservation request` 這類動作則需要明確的業務流程：UI runtime 讀取表單值，觸發明確的業務 action 或 mutation，後端處理庫存與權限，再把結果狀態送回前端。模型可以參與生成下一個畫面的文案和說明，訂位是否成功應以業務系統的回傳結果為準。<br>
+- **Demo 自行補上的任務約束**：最後才是訂位情境本身。這裡會要求優先使用 OpenUI 內建 chat 元件，送出後只做模擬確認，不能聲稱已完成真實訂位。實際使用時的 agent 設定一定會有所不同，例如某些按鈕可以透過 `Action([@ToAssistant(...)])` 把點擊轉換成下一輪對話，這個機制適合「換幾個選項」「繼續說明」「幫我比較一下」這類低風險動作；`Submit reservation request` 這類動作就不能只靠延續對話處理：UI runtime 讀取表單值，觸發明確的業務 action 或 mutation，後端處理庫存與權限，再把結果狀態送回前端。模型可以參與生成下一個畫面的文案和說明，訂位是否成功應以業務系統的回傳結果為準。
   例子：`quiet Chinese restaurant for 4 people tomorrow evening`；`do not claim a real booking was made`。
 
 三層主要內容之後，生成的 prompt 還加入 few-shot examples。大致是用幾段小型 OpenUI Lang 程式示範「表格 + follow-up」「可點擊清單」「圖片輪播」「表單驗證」，告訴 LLM 該如何組織一個介面。最後再提供一段完整輸出大概會是什麼樣子：先寫 `root`，再逐一補上標題、清單、表單、按鈕和資料。
@@ -76,7 +76,7 @@ r1_btn = Button("Select Jade Pavilion", Action([@ToAssistant("I want to select T
 ## 參考資料
 
 - [Thesys Introduces C1 to Launch the Era of Generative UI @ Thesys](https://www.businesswire.com/news/home/20250418761213/en/Thesys-Introduces-C1-to-Launch-the-Era-of-Generative-UI)：C1 在 2025-04-18 的公開新聞稿。
-- [Conversational UI Concepts @ Thesys](https://docs.thesys.dev/guides/conversational/concepts#the-flow-of-a-conversation)：Thesys 官方說明裡的 conversation flow 示意圖。
+- [Conversational UI Concepts @ Thesys](https://docs.thesys.dev/guides/conversational/concepts#the-flow-of-a-conversation)：Thesys 官方文件裡的 conversation flow 示意圖。
 - [Thesys @ Product Hunt](https://www.producthunt.com/products/thesys)：C1 在 2025-09-30 的 Product Hunt 發布紀錄，以及 OpenUI 在 2026-03-11 的 Product Hunt 發布紀錄。
 - [Why We're Open Sourcing OpenUI @ Rabi](https://www.thesys.dev/blogs/openui)：Thesys 在 2026-03-11 發布的 OpenUI 開放原始碼說明。
 - [API Changelog @ Thesys](https://docs.thesys.dev/api-reference/model-changelog)：`v-20260331` 起 C1 回應格式切換為 OpenUI 的變更紀錄。

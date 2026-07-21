@@ -16,7 +16,7 @@ AI SDK 允許 tool 和元件採用多種對應方式：一個 tool 可以只顯�
 
 ## Tool 到 Semantic Component
 
-下面分別從模型側和應用側來看。模型側先取得 prompt、conversation history 和 tool contract。以本機天氣 demo 為例，傳給 model adapter 的主要內容如下：
+下面分別從模型端和應用端來看。模型端先取得 prompt、conversation history 和 tool contract。以本機天氣 demo 為例，傳給 model adapter 的主要內容如下：
 
 ```text
 system: You are a concise weather assistant.
@@ -37,7 +37,7 @@ weather({ city: "Singapore" })
 
 到這裡，模型對 UI 的決策就結束了。`rich weather card` 只是 tool description 裡的能力說明，沒有告訴模型圖示要放在哪裡、溫度該用多大的字級，也沒有把 `WeatherCard.tsx` 傳給模型。
 
-應用側則是另一段一般的 React 程式碼：
+應用端則是另一段一般的 React 程式碼：
 
 ```tsx
 if (part.type === 'tool-weather') {
@@ -77,7 +77,7 @@ tool result
   -> 模型繼續解釋或呼叫其他 tool
 ```
 
-我們跟讀 A2UI 時一樣，先認識幾個核心物件，降低理解成本：
+和分析 A2UI 時一樣，我們先認識幾個核心物件，降低理解成本：
 
 - `Tool`：提供給模型的一項語意能力，主要由 name、description、input schema 和可選的 `execute()` 組成。它描述「可以做什麼」，不會描述 React 元件的內部版面。
 - `ModelMessage`：實際進入模型上下文的訊息，包括 system instructions、使用者輸入、assistant tool call 和 tool result。
@@ -100,11 +100,11 @@ approval-requested
 
 ## 天氣卡片 Demo
 
-為了看清楚這些中間產物，我做了一個本機天氣 demo。實驗採用 `ai@7.0.16` 和 `@ai-sdk/react@4.0.17`，模型部分替換成 deterministic mock streaming model，確保每次都能重現相同的 tool call 和日誌。
+為了看清楚這些中間產物，我做了一個本機天氣 demo。實驗採用 `ai@7.0.16` 和 `@ai-sdk/react@4.0.17`，模型部分替換成 deterministic mock streaming model，確保每次都能重現相同的 tool call 和執行紀錄。
 
 ![Vercel AI SDK weather flow](../public/media/vercel-ai-sdk-weather-flow.png)
 
-使用者輸入 `Show Singapore weather` 後，瀏覽器先透過 `useChat` 和 `DefaultChatTransport` 傳送一筆 `UIMessage`。伺服器將它轉換成 `ModelMessage`，連同 `weather` tool 一起交給 `ToolLoopAgent`。
+使用者輸入 `Show Singapore weather` 後，瀏覽器先透過 `useChat` 和 `DefaultChatTransport` 傳送一則 `UIMessage`。伺服器將它轉換成 `ModelMessage`，連同 `weather` tool 一起交給 `ToolLoopAgent`。
 
 本機 mock model 的第一輪 stream 會輸出一句文字和一次 tool call：
 
@@ -149,7 +149,7 @@ AI SDK 將這些 model/tool stream parts 轉換成 UI message chunks。擷取幾
 {"type":"tool-output-available","output":{"state":"ready","city":"Singapore","temperatureC":26}}
 ```
 
-`useChat` 不需要理解天氣業務，它只負責把這些 chunks 合併成一個 `tool-weather` part，並隨著 `input-available`、`output-available` 等狀態變化觸發 React 重新渲染。頁面程式碼辨識到 `tool-weather` 後，再把 input 和 output 交給 `WeatherCard`。
+`useChat` 不需要理解天氣資料的處理邏輯，它只負責把這些 chunks 合併成一個 `tool-weather` part，並隨著 `input-available`、`output-available` 等狀態變化觸發 React 重新渲染。頁面程式碼辨識到 `tool-weather` 後，再把 input 和 output 交給 `WeatherCard`。
 
 tool result 還會被放回下一輪 `ModelMessage`。模型因而知道新加坡是 26°C，可以繼續輸出一句摘要，也可以根據結果呼叫下一個 tool。一份結果在這裡有兩個消費者：React 用它繪製卡片，模型用它繼續目前的 agent loop。
 
@@ -173,7 +173,7 @@ server tool -> approval-requested -> 使用者允許或拒絕
 
 ## 簡單帶來的工程價值
 
-這條路線在 UI 表達層可研究的內容不多。模型產生的是 tool call；基礎元件結構、資料繫結和局部 UI 更新仍由應用掌握，沒有形成獨立協定。不過，它把 agent 和前端之間一批瑣碎的連接工作收進統一的 message stream。
+這條路線在 UI 表達層可研究的內容不多。模型產生的是 tool call；基礎元件結構、資料繫結和局部 UI 更新並未形成獨立協定。不過，它把 agent 和前端之間一批瑣碎的連接工作收進統一的 message stream。
 
 text、reasoning、tool input、tool output、custom data 和 metadata 可以沿著同一條 stream 抵達瀏覽器。`useChat` 負責增量合併 message parts，並讓 React 根據最新狀態重新渲染；搭配持久化、transport 和 resume 介面，應用也不必為每一種內容重新設計一套串流協定。
 

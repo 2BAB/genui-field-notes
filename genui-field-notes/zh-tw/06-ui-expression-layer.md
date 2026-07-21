@@ -39,7 +39,7 @@ A2UI 先由用戶端宣告自己支援的 catalog：
 }
 ```
 
-`catalogId` 是用戶端和 agent 共用的元件字典。用戶端透過它說明「我能繪製哪些元件」；agent 或 generation middleware 再把 protocol schema、catalog 和生成規則整理給模型。A2UI 規定通訊合約，system prompt 則由每個 agent 實作自行組織。
+`catalogId` 是用戶端和 agent 共用的元件字典。用戶端透過它說明「我能呈現哪些元件」；agent 或 generation middleware 再把 protocol schema、catalog 和生成規則整理給模型。A2UI 規定通訊合約，system prompt 則由每個 agent 實作自行組織。
 
 這次 A2UI system prompt 是一份針對天氣 demo 精簡過的生成合約，共 9,466 個字元、2,323 tokens，主要包含四個部分：
 
@@ -50,11 +50,11 @@ A2UI 先由用戶端宣告自己支援的 catalog：
 
 一輪 user message 包含一句這次的請求，加上完整的 weather snapshot；demo 中這一輪共 542 個字元、150 tokens。模型生成 JSONL 後，伺服器端會繼續檢查 catalog、訊息順序、資料、元件樹和 action，再把通過驗證的三則訊息交給 A2A。
 
-這兩個起點已經帶出一項工程差異：OpenUI 的生成合約通常會跟著 Web 服務和 component library 一起發布；A2UI 的 catalog 同時受到用戶端版本限制，伺服器端需要先知道目前 Android、iOS 或 Flutter 用戶端能繪製什麼。
+這兩個起點已經帶出一項工程差異：OpenUI 的生成合約通常會跟著 Web 服務和 component library 一起發布；A2UI 的 catalog 同時受到用戶端版本限制，伺服器端需要先知道目前 Android、iOS 或 Flutter 用戶端能呈現什麼。
 
 ## 第一次生成：OpenUI Lang 和 A2UI Messages
 
-OpenUI 回傳的是一段以 `root` 為進入點的 UI 程式。本次真實 Gemini 輸出一共有 17 則 statements，開頭如下：
+OpenUI 回傳的是一段以 `root` 為進入點的 UI 程式。本次真實 Gemini 輸出一共有 17 條 statement，開頭如下：
 
 ```text
 root = WeatherCanvas([hero, metrics, hourly, daily, advisory, controls])
@@ -84,7 +84,7 @@ A2UI 回傳的是數則有順序的訊息。為了方便閱讀，下面只保留
 
 兩列都是 Gemini 3.5 Flash 的真實輸出，OpenUI 這一輪少了約 73.5%。A2UI 的 1,633 tokens 裡，`updateComponents` 一則訊息佔 1,482 tokens，主要篇幅都花在 66 個基礎元件的 ID、類型、屬性和引用關係上。
 
-同一組 A2UI 紀錄裡還有一項更直接影響體驗的資料：Singapore 一輪 Gemini generation latency 為 14,057 ms，London action 為 11,977 ms。目前的實作會等完整 JSONL 回傳並通過驗證，再把 A2UI messages 交給用戶端，因此首次 Surface 至少得先等這段模型生成結束，之後還有驗證和渲染。這兩個數字只對應本次實作，A2UI 的理論下限仍需另外測量；它們也說明 token efficiency 需要和使用者實際等待的時間放在一起觀察。
+同一組 A2UI 紀錄裡還有一項更直接影響體驗的資料：Singapore 一輪 Gemini generation latency 為 14,057 ms，London action 為 11,977 ms。目前的實作會等完整 JSONL 回傳並通過驗證，再把 A2UI messages 交給用戶端，因此首次 Surface 至少得先等這段模型生成結束，後續還要經過驗證與呈現。這兩個數字只對應本次實作，A2UI 的理論下限仍需另外測量；它們也說明 token efficiency 需要和使用者實際等待的時間放在一起觀察。
 
 OpenUI 官方也把 token efficiency 當作 OpenUI Lang 的主要設計目標。官方 benchmark 使用 GPT-5.2，在 7 個情境裡先生成 OpenUI Lang，再把同一棵 AST 轉成 Vercel JSON-Render 和 Thesys C1 JSON。總計結果是 OpenUI Lang 4,800 tokens、Vercel 10,180 tokens、C1 9,948 tokens，分別減少 52.8% 和 51.7%；單一 contact form 情境最高減少 67.1%。這份官方測試涵蓋 Vercel 和 C1，本章的 A2UI 數字則來自另一組天氣實驗。
 
@@ -100,9 +100,9 @@ A2UI Basic Catalog 裡只有 `Card`、`Column`、`Row`、`Text`、`Icon`、`Divi
 
 元件粒度實際決定了模型參與多少設計。Semantic Component 路線讓模型選擇「使用哪張天氣卡片」；基礎元件路線讓模型繼續決定卡片內部有哪些 Row、Column 和 Text。前者較容易穩定導入，後者保留更多版面編排的自由，也會增加 token、生成驗證和視覺測試的成本。
 
-這次 A2UI 實驗第一次就遇到一個很具體的例子。Gemini 輸出了 70 個 components，協定欄位、元件引用和 action 都能通過驗證，但它把三個城市按鈕排進同一個 Row，Flutter 最後回報右側溢出 65 pixels 的 `RenderFlex overflow`。隨後在 prompt 和 validator 裡同時加入「窄螢幕每列兩個城市按鈕」的規則，第二次輸出收斂為 66 個 components，Singapore 和 London 都完成了原生渲染。
+這次 A2UI 實驗第一次就遇到一個很具體的例子。Gemini 輸出了 70 個 components，協定欄位、元件引用和 action 都能通過驗證，但它把三個城市按鈕排進同一個 Row，Flutter 最後回報右側溢出 65 pixels 的 `RenderFlex overflow`。隨後在 prompt 和 validator 裡同時加入「窄螢幕每列兩個城市按鈕」的規則，第二次輸出收斂為 66 個 components，Singapore 和 London 都能在原生 UI 中正確呈現。
 
-因此，元件樹通過 schema 只是第一道檢查。基礎元件越自由，生成端越需要理解 renderer 的實際尺寸限制；截圖、overflow log 和多尺寸測試也會逐漸成為生成流程的一部分。
+因此，元件樹通過 schema 驗證只是第一道檢查。基礎元件越自由，生成端越需要理解 renderer 的實際尺寸限制；截圖、overflow log 和多尺寸測試也會逐漸成為生成流程的一部分。
 
 ## 後續更新：只改資料，還是重新生成 UI
 

@@ -1,6 +1,6 @@
 # Agent 開發裡的 GenUI：UI 如何進入一次 Run
 
-承接前兩章再往深處走一步，問題會進到 Agent runtime：這段 UI 如何成為一次 Agent 執行的一部分？使用者點擊按鈕後，系統又如何帶著前面的上下文繼續？
+承接前兩章再往深處走一步，問題會進到 Agent runtime：這段 UI 如何成為一次 Agent 執行的一部分？使用者點選按鈕後，系統又如何帶著前面的上下文繼續？
 
 本章沿著一次完整的 Run 來看。OpenUI 和 A2UI 仍然是主要比較對象，Vercel AI SDK 則作為一條輕量的實作參照。
 
@@ -10,7 +10,7 @@
 
 AG-UI 把這個邊界定義得很直接。`RunAgentInput` 裡包含 `threadId`、`runId`、`state`、`messages`、`tools`、`context` 和 `forwardedProps`；事件串流從 `RUN_STARTED` 開始，以 `RUN_FINISHED` 或 `RUN_ERROR` 結束。中間可以穿插 text、tool call、state 和 activity events。
 
-把它收成一條線，大致是：
+把它簡化成一條線，大致是：
 
 ```text
 Thread
@@ -27,7 +27,7 @@ Run 和 transport 是兩回事。AG-UI 可以採用 SSE、WebSocket 或其他傳
 
 OpenUI 的 `ChatProvider` 管理 thread、messages 和 streaming state。呼叫 `processMessage()` 後，它把 `threadId` 和目前的 messages 傳給後端，再由 stream adapter 把 AG-UI、OpenAI Responses 或自訂後端的輸出轉成統一訊息。真正呼叫模型時，伺服器端還要加入 component library 生成的 OpenUI Lang 合約，以及本輪可以使用的 tools。
 
-A2UI 把重點放在 UI payload，Agent Run 的輸入由 A2A、AG-UI 或具體 runtime 組織。採用 A2A 時，Flutter 用戶端會把 `supportedCatalogIds` 放進 request metadata，伺服器端據此回傳用戶端能渲染的 A2UI messages；採用 AG-UI / CopilotKit 時，catalog capabilities、component schema 和 generation guidelines 會進入 `RunAgentInput.context`，middleware 還可以注入 `render_a2ui` tool。Agent 因此同時取得對話上下文和用戶端的 UI 邊界。
+A2UI 把重點放在 UI payload，Agent Run 的輸入由 A2A、AG-UI 或具體 runtime 組織。採用 A2A 時，Flutter 用戶端會把 `supportedCatalogIds` 放進 request metadata，伺服器端據此回傳用戶端能呈現的 A2UI messages；採用 AG-UI / CopilotKit 時，catalog capabilities、component schema 和 generation guidelines 會進入 `RunAgentInput.context`，middleware 還可以注入 `render_a2ui` tool。Agent 因此同時取得對話上下文和用戶端的 UI 邊界。
 
 Vercel AI SDK 的路徑更短。瀏覽器先產生 `UIMessage`，`createAgentUIStream` 驗證歷史訊息，再把它轉換成模型使用的 `ModelMessage`。tool definition 跟著 model request 一起進入 Run，模型選擇 tool，應用程式再把對應的 typed tool part 映射到 React 元件。
 
@@ -59,7 +59,7 @@ Run #1 output
   -> Run #2 input
 ```
 
-這裡的關聯資訊需要保留 UI identity。OpenUI 需要知道動作來自哪一則 assistant message 和哪一份 form state；A2UI 透過 Surface 和 component ID 定位來源；Agent runtime 則用 `threadId`、`runId`、tool call ID 或 action ID 串起前後兩輪。缺少這些 ID 時，日誌裡只能看到「按鈕被點了」和「模型又執行一次」，很難解釋兩者之間發生了什麼。
+這裡的關聯資訊需要保留 UI identity。OpenUI 需要知道動作來自哪一則 assistant message 和哪一份 form state；A2UI 透過 Surface 和 component ID 定位來源；Agent runtime 則用 `threadId`、`runId`、tool call ID 或 action ID 串起前後兩輪。缺少這些 ID 時，紀錄裡只能看到「按鈕被點了」和「模型又執行一次」，很難解釋兩者之間發生了什麼。
 
 ## 確認、核准與 Run 的暫停
 
@@ -67,9 +67,9 @@ Run #1 output
 
 AG-UI 的 interrupt lifecycle 提供一個較完整的表達方式：Run #1 以 `RUN_FINISHED` 結束，`outcome.type` 為 `interrupt`，其中包含 `interruptId`、提示文字、可選的 `toolCallId` 和 `responseSchema`。使用者作出選擇後，用戶端在同一個 Thread 裡開始 Run #2，並把結果放進 `RunAgentInput.resume[]`。若需要恢復狀態，Agent 應在第一次 Run 結束前傳送 `STATE_SNAPSHOT` 和 `MESSAGES_SNAPSHOT`。
 
-A2UI 可以負責渲染這張確認卡片和收集結構化輸入，interrupt / resume 的執行語意則來自周邊 Agent protocol。OpenUI 也可以生成 confirmation form，再由 Host 把結果交給自己的 Agent runtime。Vercel AI SDK 提供 tool execution approval；目前天氣實驗只涵蓋一般 tool flow，這條路徑留待後續驗證。
+A2UI 可以負責呈現這張確認卡片和收集結構化輸入，interrupt / resume 的執行語意則來自外圍 Agent protocol。OpenUI 也可以生成 confirmation form，再由 Host 把結果交給自己的 Agent runtime。Vercel AI SDK 提供 tool execution approval；目前天氣實驗只涵蓋一般 tool flow，這條路徑留待後續驗證。
 
-這樣拆開後，介面負責呈現與收集，Agent runtime 負責暫停、關聯、恢復和稽核。一次點擊是否已經執行真實業務，也能從 Run 的狀態判斷出來。
+這樣拆開後，介面負責呈現與收集，Agent runtime 負責暫停、關聯、恢復和稽核。一次點選是否已經執行真實業務，也能從 Run 的狀態判斷出來。
 
 ## 失敗發生在哪一層
 
@@ -79,11 +79,11 @@ GenUI 進入 Agent Run 後，錯誤大致分成三層。
 
 第二層是 Run 和 transport。`RUN_ERROR`、逾時、取消、SSE 斷線、重複 action 都需要關聯到明確的 `runId`。涉及 approval 時，還要檢查 resume 是否屬於同一個 Thread、`interruptId` 是否有效，以及重複送出是否具備冪等性。
 
-第三層是最終渲染和業務執行。A2UI 天氣實驗第一次生成的 70 個 components 可以通過協定驗證，Flutter 仍然出現 65 pixels 的 overflow；OpenUI 的 Query 或 Mutation 也可能在 runtime 遇到網路、權限或業務錯誤。schema 可以檢查結構，螢幕截圖、layout log、tool result 和業務狀態會繼續檢查真實結果。
+第三層是最終呈現和業務執行。A2UI 天氣實驗第一次生成的 70 個 components 可以通過協定驗證，Flutter 仍然出現 65 pixels 的 overflow；OpenUI 的 Query 或 Mutation 也可能在 runtime 遇到網路、權限或業務錯誤。schema 可以檢查結構；實際結果還要透過螢幕截圖、layout log、tool result 和業務狀態來確認。
 
 ## 一次 Run 應該留下什麼
 
-若要觀測整個流程並方便追查問題，一次 GenUI Run 至少需要留下這些紀錄：
+若要讓整個流程具備可觀測性，並方便追查問題，一次 GenUI Run 至少需要留下這些紀錄：
 
 1. `threadId`、`runId`、觸發來源，以及前一輪 Run 或 action 的關聯 ID。
 2. 傳給 Agent 的 messages、state、tools、catalog/schema 和 client capabilities。

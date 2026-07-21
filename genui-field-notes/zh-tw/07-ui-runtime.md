@@ -1,6 +1,6 @@
 # UI 生成後，不同框架的資料和行為如何繼續流轉
 
-UI 由 renderer 繪製出來，代表生成和渲染已經接通。使用者接下來會切換 Tab、選擇城市、填寫表單、送出訂單，伺服器端的資料也可能自行變動，需要通知用戶端。一個 GenUI framework 能否進入真實產品，更多時候取決於這些動作如何延續。接續上一章，本章繼續比較 OpenUI 和 A2UI 在這些情境下的操作，並沿用上一章的天氣 demo。
+UI 由 renderer 呈現出來，只能證明生成與呈現流程已經接通。使用者接下來會切換 Tab、選擇城市、填寫表單、送出訂單，伺服器端的資料也可能自行變動，需要通知用戶端。一個 GenUI framework 能否進入真實產品，更多時候取決於這些動作如何延續。接續上一章，本章繼續比較 OpenUI 和 A2UI 在這些情境下的操作，並沿用上一章的天氣 demo。
 
 我們先看幾次實際點擊，再把問題分成三類：本機狀態、業務動作和外部資料更新。
 
@@ -109,13 +109,13 @@ A2UI 的處理方式更接近伺服器端狀態同步。初次 response 建立 S
 }
 ```
 
-這則訊息可以來自一條持續的 SSE/WebSocket/A2A stream，也可以由 App 自行輪詢後送進 `SurfaceController`。A2UI 定義的是 Surface update message；資料從哪裡來、transport 是否為長連線、斷線後如何還原，仍需由外圍 runtime 和產品架構補齊。
+這則訊息可以來自一條持續的 SSE/WebSocket/A2A stream，也可以由 App 自行輪詢後送進 `SurfaceController`。A2UI 定義的是 Surface update message；資料從哪裡來、transport 是否為長連線、斷線後如何復原，仍需由外圍 runtime 和產品架構補齊。
 
 如果 component tree 已經綁定 `/status`，這次只需推送資料；訂單增加一塊退款表單，或物流節點清單的結構改變時，再傳送 `updateComponents`。這正是 Data Model 與 component definitions 分離後可以取得的更新粒度。
 
 ## 重用版面，只更新資料
 
-把這個問題帶回天氣 Demo：UI 已經完成生成和渲染，後續取得新資料時繼續使用現有版面。OpenUI 保留同一個 Renderer 和 Query program，A2UI 保留同一個 Surface 和 66-component tree。
+把這個問題帶回天氣 Demo：UI 已經完成生成與呈現，後續取得新資料時繼續使用現有版面。OpenUI 保留同一個 Renderer 和 Query program，A2UI 保留同一個 Surface 和 66-component tree。
 
 ### OpenUI：Query 繼續使用現有 Renderer
 
@@ -127,7 +127,7 @@ OpenUI weather demo 增加了 Query mode，並串接真實的本機 HTTP `toolPr
 
 A2UI weather demo 把 13 個天氣文字改成了 `/weather/...` data bindings。首次 response 仍會建立 Surface、Data Model 和 66-component tree；London action 後，伺服器端只傳送一則 `updateDataModel(path=/weather)`。wire payload 從完整重傳基準的 7,117 bytes 降到 654 bytes，減少 90.8%。
 
-這裡需要區分傳輸和 renderer rebuild。Flutter runtime 沒有收到新的 component update event，但 `/weather` 的變更仍讓 66 個 widget ID 重新 build。配套 runtime probe 的 scroll offset 維持在 632，focus、TextField State 和本機輸入也都完整保留。A2UI 省下了重傳 component contract 的成本，現有 Flutter renderer 仍會執行 reactive rebuild。
+這裡需要區分傳輸和 renderer rebuild。Flutter runtime 沒有收到新的 component update event，但 `/weather` 的變更仍讓 66 個 widget ID 重新 build。配套 runtime probe 的 scroll offset 維持在 632，focus、TextField State 和本機端的輸入內容也都完整保留。A2UI 省下了重傳 component contract 的成本，現有 Flutter renderer 仍會執行 reactive rebuild。
 
 這兩項結果和前面的機制可以互相對照：OpenUI Query 把資料請求、cache 和重新整理放在 Web runtime；A2UI data patch 把資料同步交給外圍 transport 和伺服器端，native renderer 訂閱 Data Model。兩條路徑都重用了已經生成的 UI 結構。後續還可以繼續測量 OpenUI 的 retry/cancellation policy，以及 A2UI leaf patch 的 frame time 和多平台一致性。
 
@@ -142,7 +142,7 @@ Thesys C1 這類 Web 產品可以讓服務方統一升級 OpenUI runtime，使�
 最後用下面三個情境來協助判斷：
 
 - **Chat 中臨時生成一張可篩選報表**：Web 是主要平台，結構變化多，OpenUI 的組合和 Query/Mutation 用起來更順手。
-- **行動端訂單詳情持續接收同城即時配送的狀態**：UI 需要 native component、穩定 identity 和 data patch，A2UI 的 Surface/Data Model 更自然。
+- **行動端訂單詳情持續接收一筆同城即時配送訂單的狀態更新**：UI 需要 native component、穩定 identity 和 data patch，A2UI 的 Surface/Data Model 更自然。
 - **固定天氣卡片只更換幾項資料**：兩套 runtime 都顯得偏重，預先定義的元件加上一般 API 往往能更快實作。
 
 
