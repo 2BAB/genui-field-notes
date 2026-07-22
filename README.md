@@ -1,8 +1,14 @@
 # GenUI Field Notes
 
+<p align="center">
+  <a href="https://genui-field-notes.2bab.com/">
+    <img src="./genui-field-notes/public/media/genui-field-notes-cover.png" alt="GenUI Field Notes cover" width="560">
+  </a>
+</p>
+
 A compact minibook for observing GenUI cases, UI expression, runtime behavior, and agent development.
 
-Read it in [English](https://genui-field-notes.2bab.com/), [简体中文](https://genui-field-notes.2bab.com/zh-cn/), or [繁體中文（台灣）](https://genui-field-notes.2bab.com/zh-tw/).
+**Read online:** [English](https://genui-field-notes.2bab.com/) · [简体中文](https://genui-field-notes.2bab.com/zh-cn/) · [繁體中文（台灣）](https://genui-field-notes.2bab.com/zh-tw/)
 
 ## Local Development
 
