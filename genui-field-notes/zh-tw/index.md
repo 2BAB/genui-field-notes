@@ -1,5 +1,7 @@
 # 簡介
 
+![GenUI Field Notes 封面](../../media/genui-field-notes-cover-square-gray.png)
+
 聊天訊息裡出現的一張精緻卡片、模型生成一段 JSON 交給用戶端呈現、頁面根據使用者輸入重新組織版面或調整主題，如今都可能被歸到同一個詞底下：Generative User Interface, aka GenUI。
 
 實際上，對工程師來說，把範圍收斂到技術層面會更容易理解：裝置端 UI 如何根據意圖、狀態、工具、資料和回饋，動態生成、調整或組裝介面。從這個角度看，GenUI 涵蓋大家日常使用的 Web 頁面與各類 App，也包括正在嘗試即時生成的遊戲等實驗。

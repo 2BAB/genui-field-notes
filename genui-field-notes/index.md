@@ -1,5 +1,7 @@
 # Introduction
 
+![GenUI Field Notes cover](../media/genui-field-notes-cover-square-gray.png)
+
 A polished card inside a chat message, a model generating JSON for a renderer, or a page reorganizing its layout or theme based on user input: today, all of these may be placed under the same term, Generative User Interface, aka GenUI.
 
 For engineers, it is easier to narrow the scope to the technical layer: how client-side UI can dynamically generate, adjust, or assemble interfaces from intent, state, tools, data, and feedback. From this angle, GenUI covers not only the Web pages and apps people use every day, but also experiments that try to generate games and other real-time experiences.
