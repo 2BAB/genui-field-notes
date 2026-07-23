@@ -34,7 +34,11 @@ const englishSidebar = [
     link: '/08-agent-development'
   },
   {
-    text: '9. A Stage Summary and Outlook',
+    text: '9. AGenUI: A Native Android Implementation of A2UI',
+    link: '/09-agenui-android'
+  },
+  {
+    text: '10. A Stage Summary and Outlook',
     link: '/09-summary-outlook'
   }
 ]
@@ -73,7 +77,11 @@ const chineseSidebar = [
     link: '/zh-cn/08-agent-development'
   },
   {
-    text: '9. GenUI 的阶段性总结与展望',
+    text: '9. AGenUI：A2UI 的 Android 原生实现',
+    link: '/zh-cn/09-agenui-android'
+  },
+  {
+    text: '10. GenUI 的阶段性总结与展望',
     link: '/zh-cn/09-summary-outlook'
   }
 ]
@@ -112,7 +120,11 @@ const taiwaneseSidebar = [
     link: '/zh-tw/08-agent-development'
   },
   {
-    text: '9. Chat-like GenUI 的階段性總結與展望',
+    text: '9. AGenUI：A2UI 的 Android 原生實作',
+    link: '/zh-tw/09-agenui-android'
+  },
+  {
+    text: '10. Chat-like GenUI 的階段性總結與展望',
     link: '/zh-tw/09-summary-outlook'
   }
 ]
