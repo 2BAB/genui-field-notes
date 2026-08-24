@@ -1,4 +1,4 @@
-# OpenAI 的 GenUI 實作：ChatKit
+# OpenAI: ChatKit Widgets
 
 第 5 章介紹 Vercel AI SDK 時，我們提到這是一種很基礎的 `Tool Call` 到預先定義卡片元件的對映：模型先呼叫 `getWeather` 之類的 Tool，前端再用約定好的 `<Weather>` 元件呈現 Tool Result。OpenAI 的 ChatKit **Widgets** 基本上延續了這套做法，兩者的主要差異在 UI 這一層：Vercel 直接使用專案裡的 React 元件，ChatKit 則提供一套固定的 Widget Catalog。
 

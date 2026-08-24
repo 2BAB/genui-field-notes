@@ -1,4 +1,4 @@
-# OpenAI GenUI in Practice: ChatKit
+# OpenAI: ChatKit Widgets
 
 When Chapter 5 introduced Vercel AI SDK, we described its approach as a basic mapping from a `Tool Call` to a predefined card component: the model first calls a Tool such as `getWeather`, then the frontend renders the Tool Result with an agreed component such as `<Weather>`. OpenAI's ChatKit **Widgets** largely follow the same approach. The main difference is at the UI layer: Vercel uses React components from the project directly, while ChatKit provides a fixed Widget Catalog.
 

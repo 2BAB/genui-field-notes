@@ -38,7 +38,7 @@ const englishSidebar = [
     link: '/09-agenui-android'
   },
   {
-    text: '10. OpenAI GenUI in Practice: ChatKit',
+    text: '10. OpenAI: ChatKit Widgets',
     link: '/10-openai-chatkit'
   },
   {
@@ -85,7 +85,7 @@ const chineseSidebar = [
     link: '/zh-cn/09-agenui-android'
   },
   {
-    text: '10. OpenAI 的 GenUI 实践：ChatKit',
+    text: '10. OpenAI: ChatKit Widgets',
     link: '/zh-cn/10-openai-chatkit'
   },
   {
@@ -132,7 +132,7 @@ const taiwaneseSidebar = [
     link: '/zh-tw/09-agenui-android'
   },
   {
-    text: '10. OpenAI 的 GenUI 實作：ChatKit',
+    text: '10. OpenAI: ChatKit Widgets',
     link: '/zh-tw/10-openai-chatkit'
   },
   {
