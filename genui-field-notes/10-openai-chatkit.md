@@ -199,7 +199,7 @@ The server also writes a `HiddenContextItem` to the Thread to record that the us
 
 ## Platform and Language Boundaries
 
-On the backend, Widgets are ordinary JSON, so Node.js, Java, or Go can generate the same component tree. The official `.widget + Jinja + WidgetTemplate` toolchain currently lives in the Python SDK. The public Node.js packages do not yet appear to provide an equivalent template compiler or Custom Server runtime. A Node.js project will generally need to construct Widget JSON with TypeScript functions or integrate its own template engine. The ChatKit Renderer ultimately reads the component tree received by the browser.
+On the backend, Widgets are ordinary JSON, so any backend language or framework can generate the same component tree. The official `.widget + Jinja + WidgetTemplate` toolchain currently lives in the Python SDK. The public Node.js packages do not yet appear to provide an equivalent template compiler or Custom Server runtime. A Node.js project will generally need to construct Widget JSON with TypeScript functions or integrate its own template engine. The ChatKit Renderer ultimately reads the component tree received by the browser.
 
 On the client, ChatKit is a Web Component. Other platforms can therefore embed Web content and could theoretically implement their own Renderer for the Widget Catalog. OpenAI does not currently provide a native Renderer comparable to A2UI Flutter or AGenUI Android, so ChatKit client deployments remain strongly Web-oriented.
 

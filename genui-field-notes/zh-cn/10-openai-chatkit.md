@@ -199,7 +199,7 @@ ChatKit Python SDK 将两个 `WidgetRoot` 状态转换成 `thread.item.added`、
 
 ## 平台和语言边界
 
-一方面，由于 Widget 是普通 JSON，后端选择上 Node.js、Java 或 Go 都能生成相同的组件树。官方的 `.widget + Jinja + WidgetTemplate` 工具链目前放在 Python SDK 中；公开的 Node.js 包里尚未看到对等的模板编译器和 Custom Server runtime。Node.js 项目一般需要用 TypeScript 函数构造 Widget JSON，或者自行接入模板引擎。ChatKit Renderer 最终读取的是浏览器收到的组件树。
+一方面，由于 Widget 是普通 JSON，任意后端语言和框架都可以生成相同的组件树。官方的 `.widget + Jinja + WidgetTemplate` 工具链目前放在 Python SDK 中；公开的 Node.js 包里尚未看到对等的模板编译器和 Custom Server runtime。Node.js 项目一般需要用 TypeScript 函数构造 Widget JSON，或者自行接入模板引擎。ChatKit Renderer 最终读取的是浏览器收到的组件树。
 
 另一方面，客户端是一套 Web Component，因此除了浏览器外，其他平台可以嵌入 Web 内容，理论上也可以自行实现这份 Widget Catalog 的 Renderer。OpenAI 暂未提供与 A2UI Flutter、AGenUI Android 相似的原生 Renderer，因此 ChatKit 的客户端落地仍明显偏向 Web。
 
