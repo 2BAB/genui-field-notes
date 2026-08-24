@@ -38,7 +38,11 @@ const englishSidebar = [
     link: '/09-agenui-android'
   },
   {
-    text: '10. A Stage Summary and Outlook',
+    text: '10. OpenAI GenUI in Practice: ChatKit',
+    link: '/10-openai-chatkit'
+  },
+  {
+    text: '11. A Stage Summary and Outlook',
     link: '/09-summary-outlook'
   }
 ]
@@ -81,7 +85,11 @@ const chineseSidebar = [
     link: '/zh-cn/09-agenui-android'
   },
   {
-    text: '10. GenUI 的阶段性总结与展望',
+    text: '10. OpenAI 的 GenUI 实践：ChatKit',
+    link: '/zh-cn/10-openai-chatkit'
+  },
+  {
+    text: '11. GenUI 的阶段性总结与展望',
     link: '/zh-cn/09-summary-outlook'
   }
 ]
@@ -124,7 +132,11 @@ const taiwaneseSidebar = [
     link: '/zh-tw/09-agenui-android'
   },
   {
-    text: '10. Chat-like GenUI 的階段性總結與展望',
+    text: '10. OpenAI 的 GenUI 實作：ChatKit',
+    link: '/zh-tw/10-openai-chatkit'
+  },
+  {
+    text: '11. Chat-like GenUI 的階段性總結與展望',
     link: '/zh-tw/09-summary-outlook'
   }
 ]
